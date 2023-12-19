@@ -1,0 +1,30 @@
+{
+  "AppTitle": "Ultimate Quiz",
+  "Header": {
+    "HelloUsername": "Xin chào, {username}",
+    "WelcomeToApp": "Chào mừng bạn đến {appName} !"
+  },
+  "Search": {
+    "Hint_QuizCollectionAndEverything": "Quiz, bộ sưu tập và mọi thứ ..."
+  },
+  "Title": {
+    "ContinueQuiz": "Tiếp tục Quiz",
+    "TopCategories": "Danh mục hàng đầu",
+    "ExploreAll": "Khám phá tất cả",
+    "Collections": "Bộ sưu tập",
+    "HotTags": "Thẻ phổ biến"
+  },
+  "Collection": {
+    "Quizzes": "{number} Câu hỏi"
+  },
+  "Dashboard": {
+    "Home": "Trang chủ",
+    "Collections": "Bộ sưu tập",
+    "Account": "Tài khoản"
+  },
+  "Errors": {
+    "UnknownError": "Lỗi không xác định",
+    "NetworkError": "Lỗi kết nối mạng",
+    "UnauthorizedError": "Yêu cầu yêu cầu xác thực người dùng."
+  }
+}

@@ -1,0 +1,108 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+project.ext.envConfigFiles = [
+        debug: ".env",
+        dev: ".env",
+        staging: ".env.stg",
+        production: ".env.prod",
+]
+
+apply from: project(':flutter_config').projectDir.getPath() + "/dotenv.gradle"
+
+
+def flutterMinSdkVersion = localProperties.getProperty('flutter.minSdkVersion')
+if (flutterMinSdkVersion == null) {
+    flutterMinSdkVersion = '22'
+}
+
+def flutterTargetSdkVersion = localProperties.getProperty('flutter.targetSdkVersion')
+if (flutterTargetSdkVersion == null) {
+    flutterTargetSdkVersion = flutter.targetSdkVersion
+}
+
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(rootProject.file('key.properties')))
+
+android {
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        multiDexEnabled true
+        compileSdk flutter.compileSdkVersion
+        minSdkVersion flutterMinSdkVersion
+        targetSdkVersion flutterTargetSdkVersion
+        applicationId project.env.get("APP_ID")
+        versionCode project.env.get("APP_VERSION_CODE").toInteger()
+        versionName project.env.get("APP_VERSION_NAME")
+        resValue "string", "build_config_package", "com.uqsystem.uqapp.uq_system_app"
+    }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        dev {
+            dimension "environment"
+        }
+
+        staging {
+            dimension "environment"
+        }
+
+        production {
+            dimension "environment"
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'gson.proguard-rules.pro'
+            productFlavors.all { flavor ->
+                flavor.signingConfig = android.signingConfigs.create("${flavor.name}")
+                flavor.signingConfig.storeFile = rootProject.file(keystoreProperties["${flavor.name}StoreFile"])
+                flavor.signingConfig.storePassword = keystoreProperties["${flavor.name}StorePassword"]
+                flavor.signingConfig.keyAlias = keystoreProperties["${flavor.name}KeyAlias"]
+                flavor.signingConfig.keyPassword = keystoreProperties["${flavor.name}KeyPassword"]
+            }
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}

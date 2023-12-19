@@ -1,0 +1,30 @@
+{
+  "AppTitle": "Ultimate Quiz",
+  "Header": {
+    "HelloUsername": "Hello, {username}",
+    "WelcomeToApp": "Welcome to {appName} !"
+  },
+  "Search": {
+    "Hint_QuizCollectionAndEverything": "Quiz, collection and everything ..."
+  },
+  "Title": {
+    "ContinueQuiz": "Continue Quiz",
+    "TopCategories": "Top Categories",
+    "ExploreAll": "Explore all",
+    "Collections": "Collections",
+    "HotTags": "Hot Tags"
+  },
+  "Collection": {
+    "Quizzes": "{number} Quizzes"
+  },
+  "Dashboard": {
+    "Home": "Home",
+    "Collections": "Collections",
+    "Account": "Account"
+  },
+  "Errors": {
+    "UnknownError": "Unknown error",
+    "NetworkError": "Network error",
+    "UnauthorizedError": "The request requires user authentication"
+  }
+}
