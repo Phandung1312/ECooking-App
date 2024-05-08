@@ -12,9 +12,7 @@ class {{name.pascalCase()}}Page extends StatefulWidget {
 }
 
 class _{{name.pascalCase()}}PageState extends State<{{name.pascalCase()}}Page> {
-  // TODO: Register the bloc in the provider
-  final {{name.pascalCase()}}Bloc _bloc = provider.get<{{name.pascalCase()}}Bloc>();
-
+final {{name.pascalCase()}}Bloc _bloc = getIt.get<{{name.pascalCase()}}Bloc>();
   @override
   void dispose() {
     _bloc.close();

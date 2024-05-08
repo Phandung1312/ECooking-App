@@ -9,21 +9,21 @@ final AppTheme darkTheme = AppTheme(
   name: 'dark',
   brightness: Brightness.dark,
   colors: const AppColors(
-    primarySwatch: Colors.deepPurple,
-    primary: Color(0xFF2B1BE1),
-    secondary: Color(0xFFFFAB49),
+    primarySwatch: Colors.deepOrange,
+    primary: Color(0xFF181818),
+    secondary: Color(0xFFD5310E),
     accent: Color(0xFFFFFFFF),
     background: Color(0xFFFFFFFF),
-    backgroundDark: Color(0xFF0E1118),
-    disabled: Color(0xFF9CA4AF),
+    backgroundDark: Color(0xFFF1F1F1),
+    disabled: Color(0xFFE4E4E4),
     information: Color(0xFF5487F5),
     success: Color(0xFF19C18F),
     alert: Color(0xFFFBA707),
     warning: Color(0xFFFF9D5C),
     error: Color(0xFFFF0000),
-    text: Color(0xFFFFFFFF),
+    text: Color(0xFF181818),
     border: Color(0xFF454F60),
-    hint: Color(0xFF888B8E),
+    hint: Color(0xFF989898),
     divider: Color(0xFFD9D9D9),
   ),
   typographies: AppTypography(
@@ -69,6 +69,16 @@ final AppTheme darkTheme = AppTheme(
     ),
     bodyBold: GoogleFonts.rubik(
       fontSize: 17,
+      fontWeight: FontWeight.w600,
+      height: 1.3,
+    ),
+    button: GoogleFonts.rubik(
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      height: 1.3,
+    ),
+    buttonBold: GoogleFonts.rubik(
+      fontSize: 15,
       fontWeight: FontWeight.w600,
       height: 1.3,
     ),
@@ -194,7 +204,8 @@ class AppTheme extends ThemeExtension<AppTheme> {
         primaryColor: colors.primary,
         unselectedWidgetColor: colors.hint,
         disabledColor: colors.disabled,
-        scaffoldBackgroundColor: colors.primary,
+        scaffoldBackgroundColor: colors.background,
+
         hintColor: colors.hint,
         dividerColor: colors.border,
         colorScheme: _baseColorScheme.copyWith(
@@ -208,7 +219,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
           onBackground: colors.text,
         ),
         textTheme: TextTheme(
-          bodyMedium: typographies.body,
+          bodyMedium: typographies.body.withColor(colors.text),
         ),
         appBarTheme: AppBarTheme(
           elevation: 0,
@@ -216,8 +227,8 @@ class AppTheme extends ThemeExtension<AppTheme> {
           titleTextStyle: typographies.title3,
         ),
         tabBarTheme: TabBarTheme(
-          labelStyle: typographies.body,
-          unselectedLabelStyle: typographies.body,
+          labelStyle: typographies.body.withColor(colors.secondary),
+          unselectedLabelStyle: typographies.body.withColor(colors.secondary),
           labelColor: colors.accent,
           unselectedLabelColor: colors.hint,
         ),
@@ -240,7 +251,7 @@ class AppTheme extends ThemeExtension<AppTheme> {
             backgroundColor: MaterialStateProperty.resolveWith((states) {
               return states.contains(MaterialState.disabled)
                   ? colors.disabled
-                  : null; // Defer to the widget's default.
+                  : colors.background; // Defer to the widget's default.
             }),
             foregroundColor: MaterialStateProperty.resolveWith((states) {
               return states.contains(MaterialState.disabled)
@@ -308,14 +319,14 @@ class AppTheme extends ThemeExtension<AppTheme> {
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: colors.background,
           elevation: 1,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
           selectedItemColor: colors.primary,
           unselectedItemColor: colors.border,
           selectedIconTheme: IconThemeData(size: 32, color: colors.primary),
           unselectedIconTheme: IconThemeData(size: 32, color: colors.border),
-          selectedLabelStyle: typographies.caption2Bold,
-          unselectedLabelStyle: typographies.caption2Bold,
+          selectedLabelStyle: typographies.caption2Bold.withColor(colors.secondary),
+          unselectedLabelStyle: typographies.caption2Bold.withColor(colors.secondary),
           type: BottomNavigationBarType.fixed,
         ),
         dividerTheme: DividerThemeData(

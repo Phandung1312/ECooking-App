@@ -10,6 +10,8 @@ class AppTypography {
   final TextStyle title3Bold;
   final TextStyle body;
   final TextStyle bodyBold;
+  final TextStyle button;
+  final TextStyle buttonBold;
   final TextStyle caption1;
   final TextStyle caption1Bold;
   final TextStyle caption2;
@@ -25,6 +27,8 @@ class AppTypography {
     required this.title3Bold,
     required this.body,
     required this.bodyBold,
+    required this.button,
+    required this.buttonBold,
     required this.caption1,
     required this.caption1Bold,
     required this.caption2,
@@ -45,6 +49,8 @@ class AppTypography {
       title3Bold: TextStyle.lerp(title3Bold, other.title3Bold, t)!,
       body: TextStyle.lerp(body, other.body, t)!,
       bodyBold: TextStyle.lerp(bodyBold, other.bodyBold, t)!,
+      button: TextStyle.lerp(button, other.button, t)!,
+      buttonBold: TextStyle.lerp(buttonBold, other.buttonBold, t)!,
       caption1: TextStyle.lerp(caption1, other.caption1, t)!,
       caption1Bold: TextStyle.lerp(caption1Bold, other.caption1Bold, t)!,
       caption2: TextStyle.lerp(caption2, other.caption2, t)!,

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "871365545655",
+    "project_id": "ecooking-47d96",
+    "storage_bucket": "ecooking-47d96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871365545655:android:494f25f55fbe8e5bb74732",
+        "android_client_info": {
+          "package_name": "com.uqsystem.uqapp.uq_system_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "871365545655-kb1po5952b8qsmdlbj627qc2egqai83p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uqsystem.uqapp.uq_system_app",
+            "certificate_hash": "d6ec13f7891e7633a0705505ffbd39d24b2dacba"
+          }
+        },
+        {
+          "client_id": "871365545655-brqp3ne98hbqds8vanc3s2n58a10nq9h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqFI5pxER-WFT_xpj2kvEBIH8byZirWdU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "871365545655-brqp3ne98hbqds8vanc3s2n58a10nq9h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -73,15 +73,15 @@ class ApiServices extends DioForNative implements Interceptor {
   Future<void> onResponse(
       Response response, ResponseInterceptorHandler handler) async {
     //TODO: save access token when user login app
-    if (response.requestOptions.path == NetworkUrls.login &&
-        response.data is Map) {
-      final accessToken = response.data['data']?['accessToken'];
-      await _authServices.saveAccessToken(accessToken);
-    }
+    // if (response.requestOptions.path == NetworkUrls.login &&
+    //     response.data is Map) {
+    //   final accessToken = response.data['data']?['accessToken'];
+    //   await _authServices.saveAccessToken(accessToken);
+    // }
     //TODO: clear access token when user logout app
-    if (response.requestOptions.path == NetworkUrls.logout) {
-      await _authServices.removeAllTokens();
-    }
+    // if (response.requestOptions.path == NetworkUrls.logout) {
+    //   await _authServices.removeAllTokens();
+    // }
     return handler.next(response);
   }
 

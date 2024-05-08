@@ -1,5 +1,7 @@
+import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+@lazySingleton
 class LocalDataSource {
   static const String _prefix = '@@app';
 
@@ -12,9 +14,7 @@ class LocalDataSource {
   );
 
   const LocalDataSource(
-    SharedPreferences prefStorage, [
-    String key = 'default',
-  ]) : this._(key, prefStorage);
+      SharedPreferences prefStorage, @Named('key') String? key) : this._(key ?? 'default', prefStorage);
 
   String get _initializedKey => "$_prefix/$key/initialized";
   String get _languageKey => "$_prefix/$key/language";

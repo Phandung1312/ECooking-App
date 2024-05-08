@@ -1,19 +1,13 @@
 class NetworkUrls {
-  static const String users = '/users';
-  static const String login = '$users/login';
-  static const String logout = '$users/logout';
-  static const String signUp = '$users/sign-up';
-  static const String account = '$users/account';
-  static const String getCategories = '/api/categories';
-  static const String getCollections = '/api/collections';
-  static const String getQuizzes = '/api/quizzes';
-  static const String getQuizById = '/api/quizzes/{quiz_id}';
-  static const String getTags = '/api/tags';
+  static const String auth = '/auth';
+  static const String googleLogin = '$auth/login/google';
+  static const String recipe = '/recipes';
+  static const String user = '/users';
+  static const String topMember = '$user/top-members';
 
   static bool requireAuthentication(String url) {
     return ![
-      login,
-      signUp,
+      googleLogin,
     ].contains(url);
   }
 }

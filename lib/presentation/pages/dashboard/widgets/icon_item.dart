@@ -1,8 +1,10 @@
-import 'dart:io';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:uq_system_app/core/extensions/theme.dart';
+
+import '../../../../assets.gen.dart';
 
 class IconItem extends StatelessWidget {
   final String path;
@@ -18,14 +20,11 @@ class IconItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(
+    return AssetGenImage(
       path,
+    ).image(
       width: size,
       height: size,
-      colorFilter: ColorFilter.mode(
-        isSelected ? context.colors.primary : context.colors.border,
-        BlendMode.srcIn,
-      ),
     );
   }
 }

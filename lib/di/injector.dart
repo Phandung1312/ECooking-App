@@ -1,21 +1,17 @@
 import 'dart:async';
 
-import 'package:uq_system_app/di/modules.dart';
-import 'package:uq_system_app/di/repositories.dart';
-import 'package:uq_system_app/di/services.dart';
-import 'package:uq_system_app/di/sources.dart';
-import 'package:uq_system_app/di/states.dart';
-import 'package:uq_system_app/di/usecases.dart';
+
 
 import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
+import 'package:uq_system_app/di/injector.config.dart';
 
-final provider = GetIt.instance;
+import 'manual_inject.dart';
 
-Future injectDependencies() async {
-  await registerModules();
-  await registerServices();
-  await registerDataSources();
-  await registerRepositories();
-  await registerUseCases();
-  await registerStates();
+final getIt = GetIt.instance;
+
+@InjectableInit()
+Future<void> configureInjection(String env) async {
+  await getIt.init(environment: env);
+  await manualRegister();
 }

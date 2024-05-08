@@ -17,10 +17,10 @@ class GlobalBlocProviders extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>.value(
-          value: provider.get<AuthBloc>(),
+          value: getIt.get<AuthBloc>(),
         ),
         BlocProvider<SystemBloc>.value(
-          value: provider.get<SystemBloc>(),
+          value: getIt.get<SystemBloc>(),
         ),
       ],
       child: child,

@@ -5,10 +5,8 @@ part 'home_event.freezed.dart';
 
 @freezed
 class HomeEvent with _$HomeEvent {
-  const factory HomeEvent.errorOccurred([BaseException? error]) =
-      HomeErrorOccurred;
-
-  const factory HomeEvent.getDataStarted() = DashboardHomeGetDataStarted;
-
-  const factory HomeEvent.getRefreshData() = HomeRefreshData;
+  const factory HomeEvent.errorOccurred([BaseException? error]) = HomeErrorOccurred;
+  const factory HomeEvent.getTopMembers() = HomeGetTopMembers;
+  const factory HomeEvent.getPopularRecipes() = HomeGetPopularRecipes;
+  const factory HomeEvent.getNewestRecipes({required bool isLoadMore}) = HomeGetNewestRecipes;
 }

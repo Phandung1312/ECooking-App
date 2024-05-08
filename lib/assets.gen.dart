@@ -44,8 +44,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/.gitkeep
   String get gitkeep => 'assets/images/.gitkeep';
 
+  /// File path: assets/images/app_logo.png
+  AssetGenImage get appLogo => const AssetGenImage('assets/images/app_logo.png');
+
+  /// File path: assets/images/img_login_bg.jpg
+  AssetGenImage get imgLoginBg => const AssetGenImage('assets/images/img_login_bg.jpg');
+
   /// List of all assets
-  List<String> get values => [gitkeep];
+  List<dynamic> get values => [gitkeep, appLogo, imgLoginBg];
 }
 
 class $AssetsIconsPngGen {
@@ -54,8 +60,85 @@ class $AssetsIconsPngGen {
   /// File path: assets/icons/png/.gitkeep
   String get gitkeep => 'assets/icons/png/.gitkeep';
 
+  /// File path: assets/icons/png/ic_add.png
+  AssetGenImage get icAdd => const AssetGenImage('assets/icons/png/ic_add.png');
+
+  /// File path: assets/icons/png/ic_bookmark.png
+  AssetGenImage get icBookmark => const AssetGenImage('assets/icons/png/ic_bookmark.png');
+
+  /// File path: assets/icons/png/ic_bookmarked.png
+  AssetGenImage get icBookmarked => const AssetGenImage('assets/icons/png/ic_bookmarked.png');
+
+  /// File path: assets/icons/png/ic_facebook.png
+  AssetGenImage get icFacebook => const AssetGenImage('assets/icons/png/ic_facebook.png');
+
+  /// File path: assets/icons/png/ic_favorite.png
+  AssetGenImage get icFavorite => const AssetGenImage('assets/icons/png/ic_favorite.png');
+
+  /// File path: assets/icons/png/ic_google.png
+  AssetGenImage get icGoogle => const AssetGenImage('assets/icons/png/ic_google.png');
+
+  /// File path: assets/icons/png/ic_hello.png
+  AssetGenImage get icHello => const AssetGenImage('assets/icons/png/ic_hello.png');
+
+  /// File path: assets/icons/png/ic_home.png
+  AssetGenImage get icHome => const AssetGenImage('assets/icons/png/ic_home.png');
+
+  /// File path: assets/icons/png/ic_home_selected.png
+  AssetGenImage get icHomeSelected => const AssetGenImage('assets/icons/png/ic_home_selected.png');
+
+  /// File path: assets/icons/png/ic_next.png
+  AssetGenImage get icNext => const AssetGenImage('assets/icons/png/ic_next.png');
+
+  /// File path: assets/icons/png/ic_notification.png
+  AssetGenImage get icNotification => const AssetGenImage('assets/icons/png/ic_notification.png');
+
+  /// File path: assets/icons/png/ic_notification_selected.png
+  AssetGenImage get icNotificationSelected =>
+      const AssetGenImage('assets/icons/png/ic_notification_selected.png');
+
+  /// File path: assets/icons/png/ic_profile.png
+  AssetGenImage get icProfile => const AssetGenImage('assets/icons/png/ic_profile.png');
+
+  /// File path: assets/icons/png/ic_profile_selected.png
+  AssetGenImage get icProfileSelected =>
+      const AssetGenImage('assets/icons/png/ic_profile_selected.png');
+
+  /// File path: assets/icons/png/ic_search.png
+  AssetGenImage get icSearch => const AssetGenImage('assets/icons/png/ic_search.png');
+
+  /// File path: assets/icons/png/ic_search_selected.png
+  AssetGenImage get icSearchSelected =>
+      const AssetGenImage('assets/icons/png/ic_search_selected.png');
+
+  /// File path: assets/icons/png/ic_video.png
+  AssetGenImage get icVideo => const AssetGenImage('assets/icons/png/ic_video.png');
+
+  /// File path: assets/icons/png/ic_view.png
+  AssetGenImage get icView => const AssetGenImage('assets/icons/png/ic_view.png');
+
   /// List of all assets
-  List<String> get values => [gitkeep];
+  List<dynamic> get values => [
+        gitkeep,
+        icAdd,
+        icBookmark,
+        icBookmarked,
+        icFacebook,
+        icFavorite,
+        icGoogle,
+        icHello,
+        icHome,
+        icHomeSelected,
+        icNext,
+        icNotification,
+        icNotificationSelected,
+        icProfile,
+        icProfileSelected,
+        icSearch,
+        icSearchSelected,
+        icVideo,
+        icView
+      ];
 }
 
 class $AssetsIconsSvgGen {
@@ -69,16 +152,13 @@ class $AssetsIconsSvgGen {
       const SvgGenImage('assets/icons/svg/ic_dashboard_account.svg');
 
   /// File path: assets/icons/svg/ic_dashboard_home.svg
-  SvgGenImage get icDashboardHome =>
-      const SvgGenImage('assets/icons/svg/ic_dashboard_home.svg');
+  SvgGenImage get icDashboardHome => const SvgGenImage('assets/icons/svg/ic_dashboard_home.svg');
 
   /// File path: assets/icons/svg/ic_search.svg
-  SvgGenImage get icSearch =>
-      const SvgGenImage('assets/icons/svg/ic_search.svg');
+  SvgGenImage get icSearch => const SvgGenImage('assets/icons/svg/ic_search.svg');
 
   /// List of all assets
-  List<dynamic> get values =>
-      [gitkeep, icDashboardAccount, icDashboardHome, icSearch];
+  List<dynamic> get values => [gitkeep, icDashboardAccount, icDashboardHome, icSearch];
 }
 
 class Assets {

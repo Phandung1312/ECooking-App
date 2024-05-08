@@ -1,6 +1,8 @@
+import 'package:injectable/injectable.dart';
 import 'package:uq_system_app/data/services/auth/auth.services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+@LazySingleton(as : AuthServices)
 class AuthServicesImpl extends AuthServices {
   static const String _prefix = '@@oauth-token';
 
@@ -12,8 +14,8 @@ class AuthServicesImpl extends AuthServices {
     this.key,
   );
 
-  const AuthServicesImpl(FlutterSecureStorage storage, [String key = 'default'])
-      : this._(storage, key);
+  const AuthServicesImpl(FlutterSecureStorage storage,  @Named('key') String? key)
+      : this._(storage, key ?? 'default');
 
   String get _accessTokenKey => '$_prefix/$key/accessToken';
 

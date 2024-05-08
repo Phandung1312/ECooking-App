@@ -13,6 +13,7 @@ if (flutterRoot == null) {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 project.ext.envConfigFiles = [
@@ -56,7 +57,7 @@ android {
 
     defaultConfig {
         multiDexEnabled true
-        compileSdk flutter.compileSdkVersion
+        compileSdk 34
         minSdkVersion flutterMinSdkVersion
         targetSdkVersion flutterTargetSdkVersion
         applicationId project.env.get("APP_ID")
@@ -88,13 +89,6 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'gson.proguard-rules.pro'
-            productFlavors.all { flavor ->
-                flavor.signingConfig = android.signingConfigs.create("${flavor.name}")
-                flavor.signingConfig.storeFile = rootProject.file(keystoreProperties["${flavor.name}StoreFile"])
-                flavor.signingConfig.storePassword = keystoreProperties["${flavor.name}StorePassword"]
-                flavor.signingConfig.keyAlias = keystoreProperties["${flavor.name}KeyAlias"]
-                flavor.signingConfig.keyPassword = keystoreProperties["${flavor.name}KeyPassword"]
-            }
         }
     }
 }

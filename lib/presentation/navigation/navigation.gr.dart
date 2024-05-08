@@ -15,20 +15,10 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
-    LoginRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginRouteArgs>();
+    CreateRecipeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: LoginPage(
-          key: args.key,
-          title: args.title,
-        ),
-      );
-    },
-    DashboardHomeRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const DashboardHomePage(),
+        child: CreateRecipePage(),
       );
     },
     DashboardRoute.name: (routeData) {
@@ -37,62 +27,61 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const DashboardPage(),
       );
     },
-    DashboardAccountRoute.name: (routeData) {
+    HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: DashboardAccountPage(),
+        child: HomePage(),
+      );
+    },
+    LoginRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const LoginPage(),
+      );
+    },
+    NotificationRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: NotificationPage(),
+      );
+    },
+    ProfileRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ProfilePage(),
+      );
+    },
+    SearchRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: SearchPage(),
+      );
+    },
+    SplashRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SplashPage(),
+      );
+    },
+    ViewMoreRecipesRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ViewMoreRecipesPage(),
       );
     },
   };
 }
 
 /// generated route for
-/// [LoginPage]
-class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
-  LoginRoute({
-    Key? key,
-    required String title,
-    List<PageRouteInfo>? children,
-  }) : super(
-          LoginRoute.name,
-          args: LoginRouteArgs(
-            key: key,
-            title: title,
-          ),
-          initialChildren: children,
-        );
-
-  static const String name = 'LoginRoute';
-
-  static const PageInfo<LoginRouteArgs> page = PageInfo<LoginRouteArgs>(name);
-}
-
-class LoginRouteArgs {
-  const LoginRouteArgs({
-    this.key,
-    required this.title,
-  });
-
-  final Key? key;
-
-  final String title;
-
-  @override
-  String toString() {
-    return 'LoginRouteArgs{key: $key, title: $title}';
-  }
-}
-
-/// generated route for
-/// [DashboardHomePage]
-class DashboardHomeRoute extends PageRouteInfo<void> {
-  const DashboardHomeRoute({List<PageRouteInfo>? children})
+/// [CreateRecipePage]
+class CreateRecipeRoute extends PageRouteInfo<void> {
+  const CreateRecipeRoute({List<PageRouteInfo>? children})
       : super(
-          DashboardHomeRoute.name,
+          CreateRecipeRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'DashboardHomeRoute';
+  static const String name = 'CreateRecipeRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -112,15 +101,99 @@ class DashboardRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [DashboardAccountPage]
-class DashboardAccountRoute extends PageRouteInfo<void> {
-  const DashboardAccountRoute({List<PageRouteInfo>? children})
+/// [HomePage]
+class HomeRoute extends PageRouteInfo<void> {
+  const HomeRoute({List<PageRouteInfo>? children})
       : super(
-          DashboardAccountRoute.name,
+          HomeRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'DashboardAccountRoute';
+  static const String name = 'HomeRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [LoginPage]
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute({List<PageRouteInfo>? children})
+      : super(
+          LoginRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [NotificationPage]
+class NotificationRoute extends PageRouteInfo<void> {
+  const NotificationRoute({List<PageRouteInfo>? children})
+      : super(
+          NotificationRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'NotificationRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ProfilePage]
+class ProfileRoute extends PageRouteInfo<void> {
+  const ProfileRoute({List<PageRouteInfo>? children})
+      : super(
+          ProfileRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ProfileRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SearchPage]
+class SearchRoute extends PageRouteInfo<void> {
+  const SearchRoute({List<PageRouteInfo>? children})
+      : super(
+          SearchRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SearchRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SplashPage]
+class SplashRoute extends PageRouteInfo<void> {
+  const SplashRoute({List<PageRouteInfo>? children})
+      : super(
+          SplashRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SplashRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ViewMoreRecipesPage]
+class ViewMoreRecipesRoute extends PageRouteInfo<void> {
+  const ViewMoreRecipesRoute({List<PageRouteInfo>? children})
+      : super(
+          ViewMoreRecipesRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ViewMoreRecipesRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

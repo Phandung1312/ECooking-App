@@ -11,9 +11,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
 
-  AuthBloc get _authBloc => provider.get<AuthBloc>();
+  AuthBloc get _authBloc => getIt.get<AuthBloc>();
 
-  SystemBloc get _systemBloc => provider.get<SystemBloc>();
+  SystemBloc get _systemBloc => getIt.get<SystemBloc>();
 
   @override
   void onChange(BlocBase bloc, Change change) {
