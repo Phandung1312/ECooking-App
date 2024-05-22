@@ -6,6 +6,11 @@ import 'package:uq_system_app/core/exceptions/network_exception.dart';
 import 'package:uq_system_app/core/exceptions/unauthorized_exception.dart';
 import 'package:uq_system_app/data/services/auth/auth.services.dart';
 import 'package:uq_system_app/data/sources/network/network_urls.dart';
+import 'package:uq_system_app/di/injector.dart';
+import 'package:uq_system_app/domain/entities/enum/enum.dart';
+
+import '../../../core/bases/responses/base_error_response.dart';
+import '../../sources/network/network.dart';
 
 class ApiServices extends DioForNative implements Interceptor {
   final AuthServices _authServices;
@@ -37,7 +42,7 @@ class ApiServices extends DioForNative implements Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) async{
     final errorType = err.type;
     final statusCode = err.response?.statusCode;
 
@@ -49,9 +54,23 @@ class ApiServices extends DioForNative implements Interceptor {
     }
 
     if (statusCode == 401) {
-      return handler.next(UnauthorizedException());
-    }
+      var baseError = BaseErrorResponse.fromJson(err.response?.data);
+      if(ApiErrorType.refreshTokenExpired == baseError.errorType){
+        return handler.next(UnauthorizedException());
+      }
+      else if(baseError.errorType == ApiErrorType.accessTokenExpired){
+         final networkDataSource = getIt.get<NetworkDataSource>();
 
+         var refreshToken = await _authServices.getRefreshToken();
+         final response = await networkDataSource.refreshToken(refreshToken ?? '');
+          if(response.data != null){
+
+          }
+          else{
+            return handler.next(UnauthorizedException());
+          }
+      }
+    }
     return handler.next(err);
   }
 
@@ -59,11 +78,10 @@ class ApiServices extends DioForNative implements Interceptor {
   Future<void> onRequest(
       RequestOptions originalOptions, RequestInterceptorHandler handler) async {
     final options = originalOptions.copyWith();
-    // TODO:
-    // if (NetworkUrls.requireAuthentication(options.path)) {
-    //   options.headers =
-    //       await _authServices.getAuthenticatedHeaders(options.headers);
-    // }
+    if (NetworkUrls.requireAuthentication(options.path)) {
+      options.headers =
+          await _authServices.getAuthenticatedHeaders(options.headers);
+    }
     options.headers =
         await _authServices.getAuthenticatedHeaders(options.headers);
     return handler.next(options);
@@ -72,14 +90,12 @@ class ApiServices extends DioForNative implements Interceptor {
   @override
   Future<void> onResponse(
       Response response, ResponseInterceptorHandler handler) async {
-    //TODO: save access token when user login app
-    // if (response.requestOptions.path == NetworkUrls.login &&
-    //     response.data is Map) {
-    //   final accessToken = response.data['data']?['accessToken'];
-    //   await _authServices.saveAccessToken(accessToken);
-    // }
+    if (response.requestOptions.path.contains(NetworkUrls.login) &&
+        response.data is Map) {
+      final accessToken = response.data['data']?['accessToken'];
+      await _authServices.saveAccessToken(accessToken);
+    }
     //TODO: clear access token when user logout app
-    // if (response.requestOptions.path == NetworkUrls.logout) {
     //   await _authServices.removeAllTokens();
     // }
     return handler.next(response);

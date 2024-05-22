@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:uq_system_app/presentation/pages/auth/login/login_screens.dart';
+import 'package:uq_system_app/presentation/pages/comment/comment.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/create_recipe/create_recipe.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/dashboard.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/home/home.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/notification/notification.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/profile/profile.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/search/search.dart';
+import 'package:uq_system_app/presentation/pages/recipe_details/recipe_details.dart';
 import 'package:uq_system_app/presentation/pages/splash/splash.dart';
 import 'package:uq_system_app/presentation/pages/view_more_recipes/view_more_recipes.dart';
 
@@ -25,6 +27,8 @@ class AppRouter extends _$AppRouter {
       AutoRoute(path: 'profile', page: ProfileRoute.page),
     ]),
     AutoRoute(path: '/view_more_recipes', page: ViewMoreRecipesRoute.page),
+    AutoRoute(path: '/recipe_details', page: RecipeDetailsRoute.page),
+    AutoRoute(path: '/comment', page: CommentRoute.page),
       ];
 
   @override

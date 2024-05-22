@@ -7,7 +7,7 @@ part 'auth_event.freezed.dart';
 
 @freezed
 class AuthEvent with _$AuthEvent {
-
+  const factory AuthEvent.errorOccurred([BaseException? error]) = AuthErrorOccurred;
   const factory AuthEvent.login({required LoginType loginType}) = AuthLogin;
   const factory AuthEvent.loggedOut([BaseException? error]) = AuthLoggedOut;
 }

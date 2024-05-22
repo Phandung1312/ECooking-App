@@ -15,6 +15,13 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    CommentRoute.name: (routeData) {
+      final args = routeData.argsAs<CommentRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: CommentPage(args.recipeId),
+      );
+    },
     CreateRecipeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -51,6 +58,16 @@ abstract class _$AppRouter extends RootStackRouter {
         child: ProfilePage(),
       );
     },
+    RecipeDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<RecipeDetailsRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: RecipeDetailsPage(
+          id: args.id,
+          instructionOrder: args.instructionOrder,
+        ),
+      );
+    },
     SearchRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -70,6 +87,35 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [CommentPage]
+class CommentRoute extends PageRouteInfo<CommentRouteArgs> {
+  CommentRoute({
+    required int recipeId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CommentRoute.name,
+          args: CommentRouteArgs(recipeId: recipeId),
+          initialChildren: children,
+        );
+
+  static const String name = 'CommentRoute';
+
+  static const PageInfo<CommentRouteArgs> page =
+      PageInfo<CommentRouteArgs>(name);
+}
+
+class CommentRouteArgs {
+  const CommentRouteArgs({required this.recipeId});
+
+  final int recipeId;
+
+  @override
+  String toString() {
+    return 'CommentRouteArgs{recipeId: $recipeId}';
+  }
 }
 
 /// generated route for
@@ -154,6 +200,44 @@ class ProfileRoute extends PageRouteInfo<void> {
   static const String name = 'ProfileRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [RecipeDetailsPage]
+class RecipeDetailsRoute extends PageRouteInfo<RecipeDetailsRouteArgs> {
+  RecipeDetailsRoute({
+    required int id,
+    int? instructionOrder,
+    List<PageRouteInfo>? children,
+  }) : super(
+          RecipeDetailsRoute.name,
+          args: RecipeDetailsRouteArgs(
+            id: id,
+            instructionOrder: instructionOrder,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'RecipeDetailsRoute';
+
+  static const PageInfo<RecipeDetailsRouteArgs> page =
+      PageInfo<RecipeDetailsRouteArgs>(name);
+}
+
+class RecipeDetailsRouteArgs {
+  const RecipeDetailsRouteArgs({
+    required this.id,
+    this.instructionOrder,
+  });
+
+  final int id;
+
+  final int? instructionOrder;
+
+  @override
+  String toString() {
+    return 'RecipeDetailsRouteArgs{id: $id, instructionOrder: $instructionOrder}';
+  }
 }
 
 /// generated route for

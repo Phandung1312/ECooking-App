@@ -13,7 +13,7 @@ class {{name.pascalCase()}}Selector<T>
         );
 }
 class {{name.pascalCase()}}Builder<T>
-extends BlocBuilder<{{name.pascalCase()}}Bloc, {{name.pascalCase()}}State, T> {
+extends BlocBuilder<{{name.pascalCase()}}Bloc, {{name.pascalCase()}}State> {
 {{name.pascalCase()}}Builder({
 required Iterable<{{name.pascalCase()}}Status> statuses,
 super.key,

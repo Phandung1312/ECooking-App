@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../domain/entities/account.dart';
 
 @lazySingleton
 class LocalDataSource {
@@ -18,6 +22,7 @@ class LocalDataSource {
 
   String get _initializedKey => "$_prefix/$key/initialized";
   String get _languageKey => "$_prefix/$key/language";
+  String get _accountKey => "$_prefix/$key/account";
 
   Future<int?> getInitializedVersion() async {
     return _prefStorage.getInt(_initializedKey);
@@ -52,5 +57,16 @@ class LocalDataSource {
 
   Future<void> clearUserInfo() async {
     await saveLanguage(null);
+  }
+
+  Future<void> saveAccount(Account account) async {
+    await _prefStorage.setString(_accountKey, json.encode(account.toJson()));
+  }
+  Future<Account?> getAccount() async {
+    var accountString = _prefStorage.getString(_accountKey);
+    if (accountString != null) {
+      return Account.fromJson(jsonDecode(accountString));
+    }
+    return null;
   }
 }

@@ -31,7 +31,7 @@ class AppBlocObserver extends BlocObserver {
     if (error is UnauthorizedException ||
         (actualError is DioException &&
             actualError.response?.statusCode == 401)) {
-      _authBloc.add(const AuthLoggedOut());
+      // _authBloc.add(const AuthLoggedOut());
     }
 
     super.onError(bloc, error, stackTrace);

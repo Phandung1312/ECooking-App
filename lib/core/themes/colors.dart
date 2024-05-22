@@ -4,6 +4,7 @@ class AppColors {
   final MaterialColor primarySwatch;
   final Color primary;
   final Color secondary;
+  final Color tertiary;
   final Color accent;
   final Color background;
   final Color backgroundDark;
@@ -22,6 +23,7 @@ class AppColors {
     required this.primarySwatch,
     required this.primary,
     required this.secondary,
+    required this.tertiary,
     required this.accent,
     required this.background,
     required this.backgroundDark,
@@ -44,6 +46,7 @@ class AppColors {
     return AppColors(
       primarySwatch: primarySwatch,
       primary: Color.lerp(primary, other.primary, t)!,
+      tertiary: Color.lerp(tertiary, other.tertiary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
       background: Color.lerp(background, other.background, t)!,

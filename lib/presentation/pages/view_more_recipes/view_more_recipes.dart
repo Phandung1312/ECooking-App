@@ -14,7 +14,7 @@ import '../../../domain/entities/enum/enum.dart';
 import '../../widgets/recipe_skeleton.dart';
 import '../dashboard/home/widgets/recipe_item.dart';
 
-// TODO: Add the page to the router
+
 @RoutePage()
 class ViewMoreRecipesPage extends StatefulWidget {
   @override
@@ -44,6 +44,7 @@ class _ViewMoreRecipesPageState extends State<ViewMoreRecipesPage> {
         backgroundColor: context.colors.backgroundDark,
         appBar: AppBar(
             backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
             title: Text(
                 'Công thức phổ biến',
                 style: context.typographies.body.copyWith(

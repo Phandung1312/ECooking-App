@@ -10,6 +10,7 @@ class AccountResponse with _$AccountResponse{
     const factory AccountResponse({
       required int id,
       String? username,
+      String? email,
       String? displayName,
       String? avatarUrl,
 }) = _AccountReponse;
@@ -20,6 +21,7 @@ class AccountResponse with _$AccountResponse{
         id: id,
         username: username ?? "",
         displayName: displayName ?? "",
+        email: email ?? "",
         avatarUrl: avatarUrl ?? "",
       );
     }

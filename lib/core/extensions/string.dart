@@ -26,4 +26,20 @@ extension StringExtension on String {
       return '$years năm trước';
     }
   }
+  String formatTimeWithDate() {
+    final date = DateTime.parse(this).toLocal();
+    final now = DateTime.now();
+
+    final difference = now.difference(date);
+
+    if (difference.inDays > 1) {
+      return '${date.day} tháng ${date.month}, ${date.year}';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} giờ trước';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} phút trước';
+    } else {
+      return '${difference.inSeconds} giây trước';
+    }
+  }
 }

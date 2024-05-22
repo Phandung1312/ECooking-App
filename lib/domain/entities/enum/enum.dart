@@ -6,5 +6,23 @@ enum LoginType{
 
 enum RecipeSearchType{
   POPULAR,
-  NEWEST
+  NEWEST,
+  SEARCH
+}
+enum SearchType{
+  all,
+  recipe,
+  account,
+  instruction
+}
+enum RecipeStatus{
+  draft,
+  public,
+  block,
+}
+
+enum ApiErrorType{
+  refreshTokenExpired,
+  accessTokenExpired,
+  unknown
 }

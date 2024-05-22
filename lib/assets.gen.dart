@@ -47,11 +47,63 @@ class $AssetsImagesGen {
   /// File path: assets/images/app_logo.png
   AssetGenImage get appLogo => const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/img_bach_tuoc.jpg
+  AssetGenImage get imgBachTuoc => const AssetGenImage('assets/images/img_bach_tuoc.jpg');
+
+  /// File path: assets/images/img_ca_hoi.jpg
+  AssetGenImage get imgCaHoi => const AssetGenImage('assets/images/img_ca_hoi.jpg');
+
+  /// File path: assets/images/img_cai.jpg
+  AssetGenImage get imgCai => const AssetGenImage('assets/images/img_cai.jpg');
+
+  /// File path: assets/images/img_can_tay.jpg
+  AssetGenImage get imgCanTay => const AssetGenImage('assets/images/img_can_tay.jpg');
+
+  /// File path: assets/images/img_cha_ca.jpg
+  AssetGenImage get imgChaCa => const AssetGenImage('assets/images/img_cha_ca.jpg');
+
+  /// File path: assets/images/img_dauhu.jpg
+  AssetGenImage get imgDauhu => const AssetGenImage('assets/images/img_dauhu.jpg');
+
   /// File path: assets/images/img_login_bg.jpg
   AssetGenImage get imgLoginBg => const AssetGenImage('assets/images/img_login_bg.jpg');
 
+  /// File path: assets/images/img_luon.jpg
+  AssetGenImage get imgLuon => const AssetGenImage('assets/images/img_luon.jpg');
+
+  /// File path: assets/images/img_mang_tay.jpg
+  AssetGenImage get imgMangTay => const AssetGenImage('assets/images/img_mang_tay.jpg');
+
+  /// File path: assets/images/img_muc.jpg
+  AssetGenImage get imgMuc => const AssetGenImage('assets/images/img_muc.jpg');
+
+  /// File path: assets/images/img_nam.jpg
+  AssetGenImage get imgNam => const AssetGenImage('assets/images/img_nam.jpg');
+
+  /// File path: assets/images/img_suon.jpg
+  AssetGenImage get imgSuon => const AssetGenImage('assets/images/img_suon.jpg');
+
+  /// File path: assets/images/img_trung.jpg
+  AssetGenImage get imgTrung => const AssetGenImage('assets/images/img_trung.jpg');
+
   /// List of all assets
-  List<dynamic> get values => [gitkeep, appLogo, imgLoginBg];
+  List<dynamic> get values => [
+        gitkeep,
+        appLogo,
+        imgBachTuoc,
+        imgCaHoi,
+        imgCai,
+        imgCanTay,
+        imgChaCa,
+        imgDauhu,
+        imgLoginBg,
+        imgLuon,
+        imgMangTay,
+        imgMuc,
+        imgNam,
+        imgSuon,
+        imgTrung
+      ];
 }
 
 class $AssetsIconsPngGen {
@@ -69,11 +121,26 @@ class $AssetsIconsPngGen {
   /// File path: assets/icons/png/ic_bookmarked.png
   AssetGenImage get icBookmarked => const AssetGenImage('assets/icons/png/ic_bookmarked.png');
 
+  /// File path: assets/icons/png/ic_camera_blue.png
+  AssetGenImage get icCameraBlue => const AssetGenImage('assets/icons/png/ic_camera_blue.png');
+
+  /// File path: assets/icons/png/ic_clock.png
+  AssetGenImage get icClock => const AssetGenImage('assets/icons/png/ic_clock.png');
+
+  /// File path: assets/icons/png/ic_cooking.png
+  AssetGenImage get icCooking => const AssetGenImage('assets/icons/png/ic_cooking.png');
+
   /// File path: assets/icons/png/ic_facebook.png
   AssetGenImage get icFacebook => const AssetGenImage('assets/icons/png/ic_facebook.png');
 
   /// File path: assets/icons/png/ic_favorite.png
   AssetGenImage get icFavorite => const AssetGenImage('assets/icons/png/ic_favorite.png');
+
+  /// File path: assets/icons/png/ic_film.png
+  AssetGenImage get icFilm => const AssetGenImage('assets/icons/png/ic_film.png');
+
+  /// File path: assets/icons/png/ic_gallery.png
+  AssetGenImage get icGallery => const AssetGenImage('assets/icons/png/ic_gallery.png');
 
   /// File path: assets/icons/png/ic_google.png
   AssetGenImage get icGoogle => const AssetGenImage('assets/icons/png/ic_google.png');
@@ -111,6 +178,9 @@ class $AssetsIconsPngGen {
   AssetGenImage get icSearchSelected =>
       const AssetGenImage('assets/icons/png/ic_search_selected.png');
 
+  /// File path: assets/icons/png/ic_trash.png
+  AssetGenImage get icTrash => const AssetGenImage('assets/icons/png/ic_trash.png');
+
   /// File path: assets/icons/png/ic_video.png
   AssetGenImage get icVideo => const AssetGenImage('assets/icons/png/ic_video.png');
 
@@ -123,8 +193,13 @@ class $AssetsIconsPngGen {
         icAdd,
         icBookmark,
         icBookmarked,
+        icCameraBlue,
+        icClock,
+        icCooking,
         icFacebook,
         icFavorite,
+        icFilm,
+        icGallery,
         icGoogle,
         icHello,
         icHome,
@@ -136,6 +211,7 @@ class $AssetsIconsPngGen {
         icProfileSelected,
         icSearch,
         icSearchSelected,
+        icTrash,
         icVideo,
         icView
       ];

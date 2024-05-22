@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_state.freezed.dart';
 
-enum AuthSignOutStatus {
+enum AuthStatus {
   initial,
   loading,
   success,
@@ -13,7 +13,7 @@ enum AuthSignOutStatus {
 @freezed
 class AuthState with _$AuthState {
   const factory AuthState({
-    @Default(AuthSignOutStatus.initial) AuthSignOutStatus signOutStatus,
+    @Default(AuthStatus.initial) AuthStatus status,
     BaseException? error,
   }) = _AuthState;
 }

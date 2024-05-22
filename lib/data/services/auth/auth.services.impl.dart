@@ -37,7 +37,7 @@ class AuthServicesImpl extends AuthServices {
 
     return {
       ...headers,
-      'token': 'Bearer $accessToken',
+      'Authorization': 'Bearer $accessToken',
     };
   }
 

@@ -9,6 +9,7 @@ class Account with _$Account{
     @Default(0) int id,
     @Default('') String username,
     @Default('') String displayName,
+    @Default('') String email,
     @Default('') String avatarUrl,
   }) = _Account;
   factory Account.fromJson(Map<String, dynamic> json) =>

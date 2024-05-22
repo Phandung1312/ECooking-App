@@ -8,7 +8,7 @@ class AccountIsSigningOutSelector
   AccountIsSigningOutSelector(
       {super.key, required Widget Function(bool isSigningOut) builder})
       : super(
-          selector: (state) => state.signOutStatus == AuthSignOutStatus.loading,
+          selector: (state) => state.status == AuthStatus.loading,
           builder: (_, isSigningOut) => builder(isSigningOut),
         );
 }

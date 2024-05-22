@@ -114,24 +114,32 @@ class _HomePageState extends State<HomePage> {
             width: 10,
           ),
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: context.colors.hint.withOpacity(0.2)),
-              child: Row(
-                children: [
-                  AssetGenImage(Assets.icons.png.icSearch.path)
-                      .image(width: 28, fit: BoxFit.cover),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    "Gõ tên nguyên liệu, công thức...",
-                    style: context.typographies.body
-                        .withColor(context.colors.hint),
-                  )
-                ],
+            child: InkWell(
+              onTap: (){
+                context.router.push(const SearchRoute()).then((_) {
+                  context.router.popUntil((route) => route.settings.name == '/');
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: context.colors.hint.withOpacity(0.2)),
+                child: Row(
+                  children: [
+                    AssetGenImage(Assets.icons.png.icSearch.path)
+                        .image(width: 28, fit: BoxFit.cover),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "Gõ tên nguyên liệu, công thức...",
+                      overflow: TextOverflow.ellipsis,
+                      style: context.typographies.body
+                          .withColor(context.colors.hint),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -360,9 +368,8 @@ class _HomePageState extends State<HomePage> {
               }
               if (state.status == HomeStatus.loadedNewestRecipes) {
                 return GridView.builder(
-                  primary: true,
+                    primary: true,
                     shrinkWrap: true,
-                    // controller: scrollController,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: state.newestRecipes.length,
                     itemBuilder: (context, index) => RecipeItem(

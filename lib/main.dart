@@ -98,6 +98,7 @@ class MyApp extends StatelessWidget {
               themeMode: ThemeMode.light,
               child: SafeArea(
                 child: MaterialApp.router(
+                  builder: EasyLoading.init(),
                   debugShowCheckedModeBanner: false,
                   title: AppEnv.appName,
                   theme: system.theme.themeData.copyWith(

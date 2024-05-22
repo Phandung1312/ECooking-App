@@ -1,4 +1,5 @@
 import 'package:uq_system_app/core/extensions/text_style.dart';
+import 'package:uq_system_app/core/extensions/theme.dart';
 import 'package:uq_system_app/core/themes/colors.dart';
 import 'package:uq_system_app/core/themes/styles.dart';
 import 'package:uq_system_app/core/themes/typography.dart';
@@ -12,93 +13,109 @@ final AppTheme darkTheme = AppTheme(
     primarySwatch: Colors.deepOrange,
     primary: Color(0xFF181818),
     secondary: Color(0xFFD5310E),
+    tertiary: Color(0xF6FCD5D1),
     accent: Color(0xFFFFFFFF),
     background: Color(0xFFFFFFFF),
     backgroundDark: Color(0xFFF1F1F1),
     disabled: Color(0xFFE4E4E4),
-    information: Color(0xFF5487F5),
+    information: Color(0xFF2164FF),
     success: Color(0xFF19C18F),
     alert: Color(0xFFFBA707),
-    warning: Color(0xFFFF9D5C),
+    warning: Color(0xFF9A8978),
     error: Color(0xFFFF0000),
-    text: Color(0xFF181818),
+    text: Color(0xFF282828),
     border: Color(0xFF454F60),
     hint: Color(0xFF989898),
     divider: Color(0xFFD9D9D9),
   ),
   typographies: AppTypography(
-    title1: GoogleFonts.rubik(
+    title1: GoogleFonts.ptSans(
       fontSize: 32,
       fontWeight: FontWeight.w700,
       height: 1.3,
+      color: const Color(0xFF181818),
     ),
-    title1SemiBold: GoogleFonts.rubik(
+    title1SemiBold: GoogleFonts.notoSans(
       fontSize: 32,
       fontWeight: FontWeight.w600,
       height: 1.3,
+      color: const Color(0xFF181818),
     ),
-    title1Normal: GoogleFonts.rubik(
+    title1Normal: GoogleFonts.notoSans(
       fontSize: 32,
       fontWeight: FontWeight.w400,
+      color: const Color(0xFF181818),
       height: 1.3,
     ),
-    title2: GoogleFonts.rubik(
+    title2: GoogleFonts.notoSans(
       fontSize: 24,
       fontWeight: FontWeight.w600,
+      color: const Color(0xFF181818),
       height: 1.3,
     ),
-    title2Bold: GoogleFonts.rubik(
+    title2Bold: GoogleFonts.notoSans(
       fontSize: 24,
       fontWeight: FontWeight.w700,
+      color: const Color(0xFF181818),
       height: 1.3,
     ),
-    title3: GoogleFonts.rubik(
+    title3: GoogleFonts.notoSans(
       fontSize: 18,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w600,
       height: 1.3,
     ),
-    title3Bold: GoogleFonts.rubik(
+    title3Bold: GoogleFonts.notoSans(
       fontSize: 18,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w700,
       height: 1.3,
     ),
-    body: GoogleFonts.rubik(
+    body: GoogleFonts.notoSans(
       fontSize: 17,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w400,
       height: 1.3,
     ),
-    bodyBold: GoogleFonts.rubik(
+    bodyBold: GoogleFonts.notoSans(
       fontSize: 17,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w600,
       height: 1.3,
     ),
-    button: GoogleFonts.rubik(
+    button: GoogleFonts.notoSans(
       fontSize: 15,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w400,
       height: 1.3,
     ),
-    buttonBold: GoogleFonts.rubik(
+    buttonBold: GoogleFonts.notoSans(
       fontSize: 15,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w600,
       height: 1.3,
     ),
-    caption1: GoogleFonts.rubik(
+    caption1: GoogleFonts.notoSans(
       fontSize: 14,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w400,
       height: 1.3,
     ),
-    caption1Bold: GoogleFonts.rubik(
+    caption1Bold: GoogleFonts.notoSans(
       fontSize: 14,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w600,
       height: 1.3,
     ),
-    caption2: GoogleFonts.rubik(
+    caption2: GoogleFonts.notoSans(
       fontSize: 12,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w400,
       height: 1.3,
     ),
-    caption2Bold: GoogleFonts.rubik(
+    caption2Bold: GoogleFonts.notoSans(
       fontSize: 12,
+      color: const Color(0xFF181818),
       fontWeight: FontWeight.w600,
       height: 1.3,
     ),
@@ -205,7 +222,6 @@ class AppTheme extends ThemeExtension<AppTheme> {
         unselectedWidgetColor: colors.hint,
         disabledColor: colors.disabled,
         scaffoldBackgroundColor: colors.background,
-
         hintColor: colors.hint,
         dividerColor: colors.border,
         colorScheme: _baseColorScheme.copyWith(
@@ -223,7 +239,8 @@ class AppTheme extends ThemeExtension<AppTheme> {
         ),
         appBarTheme: AppBarTheme(
           elevation: 0,
-          backgroundColor: colors.primary,
+          backgroundColor: colors.background,
+          surfaceTintColor: colors.background,
           titleTextStyle: typographies.title3,
         ),
         tabBarTheme: TabBarTheme(
@@ -296,17 +313,23 @@ class AppTheme extends ThemeExtension<AppTheme> {
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
+          errorMaxLines: 0,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 17, horizontal: 16),
           hintStyle: typographies.body.withColor(colors.hint),
           labelStyle: typographies.body.withColor(colors.hint),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          enabledBorder:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide.none,
+          ),
+          border: InputBorder.none,
           filled: true,
-          fillColor: colors.background,
+          fillColor: const Color(0xFFF6F1EC),
           errorStyle: typographies.caption2,
-          errorMaxLines: 3,
         ),
         checkboxTheme: CheckboxThemeData(
           visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
@@ -315,6 +338,12 @@ class AppTheme extends ThemeExtension<AppTheme> {
         ),
         radioTheme: const RadioThemeData(
           visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+        ),
+        dialogBackgroundColor: colors.background,
+        dialogTheme: DialogTheme(
+          backgroundColor: colors.background,
+          surfaceTintColor: colors.background,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: colors.background,
@@ -325,8 +354,10 @@ class AppTheme extends ThemeExtension<AppTheme> {
           unselectedItemColor: colors.border,
           selectedIconTheme: IconThemeData(size: 32, color: colors.primary),
           unselectedIconTheme: IconThemeData(size: 32, color: colors.border),
-          selectedLabelStyle: typographies.caption2Bold.withColor(colors.secondary),
-          unselectedLabelStyle: typographies.caption2Bold.withColor(colors.secondary),
+          selectedLabelStyle:
+              typographies.caption2Bold.withColor(colors.secondary),
+          unselectedLabelStyle:
+              typographies.caption2Bold.withColor(colors.secondary),
           type: BottomNavigationBarType.fixed,
         ),
         dividerTheme: DividerThemeData(

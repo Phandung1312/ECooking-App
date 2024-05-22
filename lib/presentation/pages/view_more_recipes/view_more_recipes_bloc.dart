@@ -42,7 +42,7 @@ class ViewMoreRecipesBloc
       refreshController.refreshCompleted();
     }
     emit(state.copyWith(
-      recipes: [...state.recipes, ...recipes],
+      recipes: event.isLoadMore ? [...state.recipes, ...recipes] : recipes,
       recipesPage: state.recipesPage + 1,
       status: ViewMoreRecipesStatus.success,
     ));

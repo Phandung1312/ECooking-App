@@ -14,7 +14,15 @@ class CreateRecipeStatusSelector
           builder: (_, status) => builder(status),
         );
 }
-
+class CreateRecipeSelector<T>
+    extends BlocSelector<CreateRecipeBloc, CreateRecipeState, T> {
+  CreateRecipeSelector({
+    required Widget Function(T data) builder,
+    required super.selector
+  }) : super(
+    builder: (_, data) => builder(data),
+  );
+}
 class CreateRecipeStatusListener extends BlocListener<CreateRecipeBloc, CreateRecipeState> {
   CreateRecipeStatusListener({
     required Iterable<CreateRecipeStatus> statuses,
