@@ -19,19 +19,41 @@ abstract class _$AppRouter extends RootStackRouter {
       final args = routeData.argsAs<CommentRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: CommentPage(args.recipeId),
+        child: CommentPage(
+          args.recipeId,
+          args.isWriteComment,
+        ),
       );
     },
     CreateRecipeRoute.name: (routeData) {
+      final args = routeData.argsAs<CreateRecipeRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: CreateRecipePage(),
+        child: CreateRecipePage(recipeId: args.recipeId),
       );
     },
     DashboardRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const DashboardPage(),
+      );
+    },
+    EditProfileRoute.name: (routeData) {
+      final args = routeData.argsAs<EditProfileRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: EditProfilePage(profile: args.profile),
+      );
+    },
+    FollowRoute.name: (routeData) {
+      final args = routeData.argsAs<FollowRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: FollowPage(
+          userId: args.userId,
+          displayName: args.displayName,
+          isViewFollowers: args.isViewFollowers,
+        ),
       );
     },
     HomeRoute.name: (routeData) {
@@ -52,10 +74,18 @@ abstract class _$AppRouter extends RootStackRouter {
         child: NotificationPage(),
       );
     },
-    ProfileRoute.name: (routeData) {
+    NotificationSettingsRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: ProfilePage(),
+        child: NotificationSettingsPage(),
+      );
+    },
+    ProfileRoute.name: (routeData) {
+      final args = routeData.argsAs<ProfileRouteArgs>(
+          orElse: () => const ProfileRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ProfilePage(isFromDashboard: args.isFromDashboard),
       );
     },
     RecipeDetailsRoute.name: (routeData) {
@@ -68,16 +98,41 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    SavedRecipesRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: SavedRecipesPage(),
+      );
+    },
     SearchRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: SearchPage(),
       );
     },
+    SettingsRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: SettingsPage(),
+      );
+    },
     SplashRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const SplashPage(),
+      );
+    },
+    UserProfileRoute.name: (routeData) {
+      final args = routeData.argsAs<UserProfileRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: UserProfilePage(userId: args.userId),
+      );
+    },
+    ViewMoreMembersRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ViewMoreMembersPage(),
       );
     },
     ViewMoreRecipesRoute.name: (routeData) {
@@ -94,10 +149,14 @@ abstract class _$AppRouter extends RootStackRouter {
 class CommentRoute extends PageRouteInfo<CommentRouteArgs> {
   CommentRoute({
     required int recipeId,
+    required bool isWriteComment,
     List<PageRouteInfo>? children,
   }) : super(
           CommentRoute.name,
-          args: CommentRouteArgs(recipeId: recipeId),
+          args: CommentRouteArgs(
+            recipeId: recipeId,
+            isWriteComment: isWriteComment,
+          ),
           initialChildren: children,
         );
 
@@ -108,28 +167,48 @@ class CommentRoute extends PageRouteInfo<CommentRouteArgs> {
 }
 
 class CommentRouteArgs {
-  const CommentRouteArgs({required this.recipeId});
+  const CommentRouteArgs({
+    required this.recipeId,
+    required this.isWriteComment,
+  });
 
   final int recipeId;
 
+  final bool isWriteComment;
+
   @override
   String toString() {
-    return 'CommentRouteArgs{recipeId: $recipeId}';
+    return 'CommentRouteArgs{recipeId: $recipeId, isWriteComment: $isWriteComment}';
   }
 }
 
 /// generated route for
 /// [CreateRecipePage]
-class CreateRecipeRoute extends PageRouteInfo<void> {
-  const CreateRecipeRoute({List<PageRouteInfo>? children})
-      : super(
+class CreateRecipeRoute extends PageRouteInfo<CreateRecipeRouteArgs> {
+  CreateRecipeRoute({
+    required int? recipeId,
+    List<PageRouteInfo>? children,
+  }) : super(
           CreateRecipeRoute.name,
+          args: CreateRecipeRouteArgs(recipeId: recipeId),
           initialChildren: children,
         );
 
   static const String name = 'CreateRecipeRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<CreateRecipeRouteArgs> page =
+      PageInfo<CreateRecipeRouteArgs>(name);
+}
+
+class CreateRecipeRouteArgs {
+  const CreateRecipeRouteArgs({required this.recipeId});
+
+  final int? recipeId;
+
+  @override
+  String toString() {
+    return 'CreateRecipeRouteArgs{recipeId: $recipeId}';
+  }
 }
 
 /// generated route for
@@ -144,6 +223,77 @@ class DashboardRoute extends PageRouteInfo<void> {
   static const String name = 'DashboardRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EditProfilePage]
+class EditProfileRoute extends PageRouteInfo<EditProfileRouteArgs> {
+  EditProfileRoute({
+    required MemberDetails profile,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EditProfileRoute.name,
+          args: EditProfileRouteArgs(profile: profile),
+          initialChildren: children,
+        );
+
+  static const String name = 'EditProfileRoute';
+
+  static const PageInfo<EditProfileRouteArgs> page =
+      PageInfo<EditProfileRouteArgs>(name);
+}
+
+class EditProfileRouteArgs {
+  const EditProfileRouteArgs({required this.profile});
+
+  final MemberDetails profile;
+
+  @override
+  String toString() {
+    return 'EditProfileRouteArgs{profile: $profile}';
+  }
+}
+
+/// generated route for
+/// [FollowPage]
+class FollowRoute extends PageRouteInfo<FollowRouteArgs> {
+  FollowRoute({
+    required int userId,
+    required String displayName,
+    required bool isViewFollowers,
+    List<PageRouteInfo>? children,
+  }) : super(
+          FollowRoute.name,
+          args: FollowRouteArgs(
+            userId: userId,
+            displayName: displayName,
+            isViewFollowers: isViewFollowers,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'FollowRoute';
+
+  static const PageInfo<FollowRouteArgs> page = PageInfo<FollowRouteArgs>(name);
+}
+
+class FollowRouteArgs {
+  const FollowRouteArgs({
+    required this.userId,
+    required this.displayName,
+    required this.isViewFollowers,
+  });
+
+  final int userId;
+
+  final String displayName;
+
+  final bool isViewFollowers;
+
+  @override
+  String toString() {
+    return 'FollowRouteArgs{userId: $userId, displayName: $displayName, isViewFollowers: $isViewFollowers}';
+  }
 }
 
 /// generated route for
@@ -189,17 +339,46 @@ class NotificationRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ProfilePage]
-class ProfileRoute extends PageRouteInfo<void> {
-  const ProfileRoute({List<PageRouteInfo>? children})
+/// [NotificationSettingsPage]
+class NotificationSettingsRoute extends PageRouteInfo<void> {
+  const NotificationSettingsRoute({List<PageRouteInfo>? children})
       : super(
+          NotificationSettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'NotificationSettingsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ProfilePage]
+class ProfileRoute extends PageRouteInfo<ProfileRouteArgs> {
+  ProfileRoute({
+    bool isFromDashboard = true,
+    List<PageRouteInfo>? children,
+  }) : super(
           ProfileRoute.name,
+          args: ProfileRouteArgs(isFromDashboard: isFromDashboard),
           initialChildren: children,
         );
 
   static const String name = 'ProfileRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<ProfileRouteArgs> page =
+      PageInfo<ProfileRouteArgs>(name);
+}
+
+class ProfileRouteArgs {
+  const ProfileRouteArgs({this.isFromDashboard = true});
+
+  final bool isFromDashboard;
+
+  @override
+  String toString() {
+    return 'ProfileRouteArgs{isFromDashboard: $isFromDashboard}';
+  }
 }
 
 /// generated route for
@@ -241,6 +420,20 @@ class RecipeDetailsRouteArgs {
 }
 
 /// generated route for
+/// [SavedRecipesPage]
+class SavedRecipesRoute extends PageRouteInfo<void> {
+  const SavedRecipesRoute({List<PageRouteInfo>? children})
+      : super(
+          SavedRecipesRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SavedRecipesRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [SearchPage]
 class SearchRoute extends PageRouteInfo<void> {
   const SearchRoute({List<PageRouteInfo>? children})
@@ -255,6 +448,20 @@ class SearchRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [SettingsPage]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
+      : super(
+          SettingsRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SettingsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [SplashPage]
 class SplashRoute extends PageRouteInfo<void> {
   const SplashRoute({List<PageRouteInfo>? children})
@@ -264,6 +471,49 @@ class SplashRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'SplashRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [UserProfilePage]
+class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
+  UserProfileRoute({
+    required int userId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          UserProfileRoute.name,
+          args: UserProfileRouteArgs(userId: userId),
+          initialChildren: children,
+        );
+
+  static const String name = 'UserProfileRoute';
+
+  static const PageInfo<UserProfileRouteArgs> page =
+      PageInfo<UserProfileRouteArgs>(name);
+}
+
+class UserProfileRouteArgs {
+  const UserProfileRouteArgs({required this.userId});
+
+  final int userId;
+
+  @override
+  String toString() {
+    return 'UserProfileRouteArgs{userId: $userId}';
+  }
+}
+
+/// generated route for
+/// [ViewMoreMembersPage]
+class ViewMoreMembersRoute extends PageRouteInfo<void> {
+  const ViewMoreMembersRoute({List<PageRouteInfo>? children})
+      : super(
+          ViewMoreMembersRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ViewMoreMembersRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

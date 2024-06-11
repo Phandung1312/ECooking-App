@@ -9,6 +9,7 @@ enum CommentStatus {
   initial,
   loading,
   loadingMore,
+  sending,
   success,
   failure,
 }

@@ -53,3 +53,75 @@ class RecipeStatusConverter implements JsonConverter<RecipeStatus, int> {
     }
   }
 }
+
+class FeatureStatusConverter implements JsonConverter<FeatureStatus, int> {
+  const FeatureStatusConverter();
+
+  @override
+  FeatureStatus fromJson(int json) {
+    switch (json) {
+      case 1:
+        return FeatureStatus.enable;
+      case 0:
+        return FeatureStatus.disable;
+      default:
+        return FeatureStatus.disable;
+    }
+  }
+
+  @override
+  int toJson(FeatureStatus object) {
+    switch (object) {
+      case FeatureStatus.enable:
+        return 1;
+      case FeatureStatus.disable:
+        return 0;
+      default:
+        return 0;
+    }
+  }
+}
+
+class NotificationTypeConverter implements JsonConverter<NotificationType, int> {
+  const NotificationTypeConverter();
+
+  @override
+  NotificationType fromJson(int json) {
+    switch (json) {
+      case 1:
+        return NotificationType.like;
+      case 2:
+        return NotificationType.commentRecipe;
+      case 3:
+        return NotificationType.responseComment;
+      case 4:
+        return NotificationType.recipe;
+      case 5:
+        return NotificationType.save;
+      case 6 :
+        return NotificationType.follow;
+      default:
+        return NotificationType.recipe;
+    }
+  }
+
+  @override
+  int toJson(NotificationType object) {
+    switch (object) {
+      case NotificationType.like:
+        return 1;
+      case NotificationType.commentRecipe:
+        return 2;
+      case NotificationType.responseComment:
+        return 3;
+      case NotificationType.recipe:
+        return 4;
+      case NotificationType.save:
+        return 5;
+      case NotificationType.follow:
+        return 6;
+      default:
+        return 4;
+    }
+  }
+}

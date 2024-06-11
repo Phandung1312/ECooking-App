@@ -9,9 +9,11 @@ class MemberModel with _$MemberModel{
   const factory MemberModel({
     required int id,
     String? displayName,
+    String? username,
     String? avatarUrl,
     int? recipeCount,
     int? followingCount,
+    bool? isFollowing,
 
   }) = _MemberModel;
 
@@ -22,9 +24,11 @@ class MemberModel with _$MemberModel{
     return Member(
       id: id,
       displayName: displayName ?? "",
+      username: username ?? "",
       avatarUrl: avatarUrl ?? "",
       recipeCount: recipeCount ?? 0,
       followingCount: followingCount ?? 0,
+      isFollowing: isFollowing ?? false,
     );
   }
 }

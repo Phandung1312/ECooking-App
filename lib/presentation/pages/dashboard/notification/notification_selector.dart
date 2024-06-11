@@ -14,6 +14,14 @@ class NotificationStatusSelector
           builder: (_, status) => builder(status),
         );
 }
+class NotificationSelector<T> extends BlocSelector<NotificationBloc, NotificationState, T>{
+  NotificationSelector({
+    required Widget Function(T data) builder,
+    required super.selector
+  }) : super(
+    builder: (_, data) => builder(data),
+  );
+}
 
 class NotificationStatusListener extends BlocListener<NotificationBloc, NotificationState> {
   NotificationStatusListener({

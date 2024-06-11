@@ -3,11 +3,25 @@ enum LoginType{
   facebook,
   phone
 }
-
+enum ImagePickType{
+  recipe,
+  instruction
+}
+enum NotificationType{
+  like,
+  commentRecipe,
+  responseComment,
+  recipe,
+  save,
+  follow
+}
 enum RecipeSearchType{
   POPULAR,
   NEWEST,
-  SEARCH
+  SEARCH,
+  PROFILE,
+  SAVED,
+  MY_RECIPE,
 }
 enum SearchType{
   all,
@@ -25,4 +39,14 @@ enum ApiErrorType{
   refreshTokenExpired,
   accessTokenExpired,
   unknown
+}
+
+enum FeatureStatus{
+  enable,
+  disable
+}
+
+enum FollowType{
+  following,
+  follower
 }

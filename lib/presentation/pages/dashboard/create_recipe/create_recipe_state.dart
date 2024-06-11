@@ -9,6 +9,10 @@ part 'create_recipe_state.freezed.dart';
 enum CreateRecipeStatus {
   initial,
   loading,
+  uploadingVideo,
+  uploadedVideo,
+  uploadingImage,
+  uploadedImage,
   updated,
   success,
   failure,

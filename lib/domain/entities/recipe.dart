@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:uq_system_app/data/models/account/account.response.dart';
 import 'package:uq_system_app/domain/entities/account.dart';
 part 'recipe.freezed.dart';
 part 'recipe.g.dart';
@@ -18,6 +17,8 @@ class Recipe with _$Recipe {
     @Default("") String imageUrl,
     @Default(false)  bool isVideo,
     @Default("") String createdAt,
+    @Default(false) bool isLiked,
+    @Default(false) bool isSaved
   }) = _Recipe;
   factory Recipe.fromJson(Map<String, dynamic> json) =>
       _$RecipeFromJson(json);

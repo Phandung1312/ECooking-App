@@ -2,6 +2,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uq_system_app/domain/entities/account.dart';
 import 'package:uq_system_app/domain/entities/enum/enum.dart';
+import 'package:uq_system_app/domain/entities/member.dart';
 import 'ingredient.dart';
 
 import 'instruction.dart';
@@ -17,11 +18,13 @@ class RecipeDetails with _$RecipeDetails{
     @Default('') String servers,
     @Default(0) int views,
     @Default(0) int likeCount,
-    @Default(Account()) Account author,
+    @Default(Member()) Member author,
     @Default('') String videoUrl,
     @Default('') String createdAt,
     @Default(<Instruction>[]) List<Instruction> instructions,
     @Default(<Ingredient>[]) List<Ingredient> ingredients,
     @Default(RecipeStatus.draft) RecipeStatus status,
+    @Default(false) bool isSaved,
+    @Default(false) bool isFavorite,
   }) = _RecipeDetails;
 }

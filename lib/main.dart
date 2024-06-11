@@ -10,8 +10,6 @@ import 'package:injectable/injectable.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:uq_system_app/core/extensions/theme.dart';
-import 'package:uq_system_app/presentation/blocs/auth/auth_bloc.dart';
-import 'package:uq_system_app/presentation/blocs/auth/auth_state.dart';
 import 'package:uq_system_app/presentation/blocs/bloc_observer.dart';
 import 'package:uq_system_app/presentation/blocs/system/system_bloc.dart';
 import 'package:uq_system_app/presentation/blocs/system/system_state.dart';
@@ -57,71 +55,64 @@ class MyApp extends StatelessWidget {
       ..maskColor = context.colors.secondary
       ..userInteractions = false
       ..progressColor = context.colors.secondary;
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<AuthBloc, AuthState>(
-          // listenWhen: (previous, current) =>
-          //     previous.account != current.account && current.account == null,
-          listener: (context, state) {
-            _appRouter.replaceAll([ const LoginRoute()]);
-          },
-        ),
-      ],
-      child: BlocBuilder<SystemBloc, SystemState>(builder: (context, system) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: system.theme.themeData.brightness == Brightness.light
-              ? SystemUiOverlayStyle.dark
-              : SystemUiOverlayStyle.light,
-          child: RefreshConfiguration(
-            headerBuilder: () => MaterialClassicHeader(
-              color: context.colors.secondary,
-            ),
-            footerBuilder: () => ClassicFooter(
-              loadStyle: LoadStyle.ShowWhenLoading,
-              height: 40,
-              canLoadingIcon: Container(),
-              idleIcon: Container(),
-              textStyle: const TextStyle(fontSize: 0),
-              loadingText: '',
-              loadingIcon: Center(
-                child: SizedBox(
-                  height: 25,
-                  width: 25,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    color: context.colors.secondary,
-                  ),
-                ),
-              ),
-            ),
-            child: SkeletonTheme(
-              themeMode: ThemeMode.light,
-              child: SafeArea(
-                child: MaterialApp.router(
-                  builder: EasyLoading.init(),
-                  debugShowCheckedModeBanner: false,
-                  title: AppEnv.appName,
-                  theme: system.theme.themeData.copyWith(
-                    pageTransitionsTheme: const PageTransitionsTheme(builders: {
-                      TargetPlatform.iOS: NoShadowCupertinoPageTransitionsBuilder(),
-                      TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-                    }),
-                  ),
-                  locale: system.locale,
-                  supportedLocales: context.supportedLocales,
-                  localizationsDelegates: [
-                    ...context.localizationDelegates,
-                    // more delegates here
-                  ],
-                  routerConfig: _appRouter.config(
-                    navigatorObservers: () => [AutoRouteObserver()],
-                  ),
+    return BlocBuilder<SystemBloc, SystemState>(builder: (context, system) {
+      return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: system.theme.themeData.brightness == Brightness.light
+            ? SystemUiOverlayStyle.dark
+            : SystemUiOverlayStyle.light,
+        child: RefreshConfiguration(
+          headerBuilder: () => MaterialClassicHeader(
+            color: context.colors.secondary,
+          ),
+          footerBuilder: () => ClassicFooter(
+            loadStyle: LoadStyle.ShowWhenLoading,
+            height: 40,
+            canLoadingIcon: Container(),
+            idleIcon: Container(),
+            textStyle: const TextStyle(fontSize: 0),
+            loadingText: '',
+            loadingIcon: Center(
+              child: SizedBox(
+                height: 25,
+                width: 25,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: context.colors.secondary,
                 ),
               ),
             ),
           ),
-        );
-      }),
-    );
+          child: SkeletonTheme(
+            themeMode: ThemeMode.light,
+            child: SafeArea(
+              child: MaterialApp.router(
+                builder:  EasyLoading.init(),
+                debugShowCheckedModeBanner: false,
+                title: AppEnv.appName,
+                theme: system.theme.themeData.copyWith(
+                  pageTransitionsTheme: const PageTransitionsTheme(builders: {
+                    TargetPlatform.iOS: NoShadowCupertinoPageTransitionsBuilder(),
+                    TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+                  }),
+                ),
+                locale: system.locale,
+                supportedLocales: context.supportedLocales,
+                localizationsDelegates: [
+                  ...context.localizationDelegates,
+                  // more delegates here
+                ],
+                // routerConfig: _appRouter.config(
+                //   navigatorObservers: () => [AutoRouteObserver()],
+                // ),
+                routerDelegate: _appRouter.delegate(
+                  initialRoutes: [const DashboardRoute()], // Set initial route here
+                ),
+                routeInformationParser: _appRouter.defaultRouteParser(),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 }

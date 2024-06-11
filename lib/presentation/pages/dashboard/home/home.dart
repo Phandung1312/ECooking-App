@@ -40,9 +40,17 @@ class _HomePageState extends State<HomePage> {
       _bloc.add(const HomeGetNewestRecipes(isLoadMore: false));
     });
   }
+
   void _onLoading() async {
     _bloc.add(const HomeGetNewestRecipes(isLoadMore: true));
   }
+
+  void _onRefresh() async {
+    _bloc.add(const HomeGetPopularRecipes());
+    _bloc.add(const HomeGetTopMembers());
+    _bloc.add(const HomeGetNewestRecipes(isLoadMore: false));
+  }
+
   @override
   void dispose() {
     _bloc.close();
@@ -64,26 +72,29 @@ class _HomePageState extends State<HomePage> {
                 controller: _bloc.refreshController,
                 physics: const ClampingScrollPhysics(),
                 onLoading: _onLoading,
-                enablePullDown: false,
+                onRefresh: _onRefresh,
+                enablePullDown: true,
                 enablePullUp: true,
-                child: SingleChildScrollView(physics: const ClampingScrollPhysics(),child:
-                Column(children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _buildPopularRecipes(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _buildTopMember(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _buildNewestRecipes(),
-                  const SizedBox(
-                    height: 20,
-                  )
-                ]),),
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: Column(children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    _buildPopularRecipes(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    _buildTopMember(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    _buildNewestRecipes(),
+                    const SizedBox(
+                      height: 20,
+                    )
+                  ]),
+                ),
               ),
             ),
           ],
@@ -115,9 +126,10 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: InkWell(
-              onTap: (){
+              onTap: () {
                 context.router.push(const SearchRoute()).then((_) {
-                  context.router.popUntil((route) => route.settings.name == '/');
+                  context.router
+                      .popUntil((route) => route.settings.name == '/');
                 });
               },
               child: Container(
@@ -168,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                     .withColor(context.colors.secondary),
               ),
               InkWell(
-                onTap: (){
+                onTap: () {
                   context.router.push(const ViewMoreRecipesRoute());
                 },
                 child: Row(
@@ -214,18 +226,22 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       if (index < state.popularRecipes.length) {
                         return RecipeItem(
-                          recipe: state.popularRecipes[index],
-                          type: RecipeSearchType.POPULAR,
-                        );
+                            recipe: state.popularRecipes[index],
+                            type: RecipeSearchType.POPULAR,
+                            onSavedChange: (request) {
+                              _bloc.add(HomeChangeSavedRecipe(
+                                  request: request,
+                                  type: RecipeSearchType.POPULAR));
+                            });
                       } else {
                         return InkWell(
-                          onTap: (){
+                          onTap: () {
                             context.router.push(const ViewMoreRecipesRoute());
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child:
-                                AssetGenImage(Assets.icons.png.icNext.path).image(
+                            child: AssetGenImage(Assets.icons.png.icNext.path)
+                                .image(
                               width: 48,
                               height: 48,
                             ),
@@ -312,10 +328,15 @@ class _HomePageState extends State<HomePage> {
                   height: 20,
                 ),
                 Center(
-                  child: Text(
-                    "Top thành viên >>",
-                    style: context.typographies.bodyBold
-                        .withColor(context.colors.text.withOpacity(0.8)),
+                  child: InkWell(
+                    onTap: () {
+                      context.router.push(const ViewMoreMembersRoute());
+                    },
+                    child: Text(
+                      "Xem thêm >>",
+                      style: context.typographies.bodyBold
+                          .withColor(context.colors.text.withOpacity(0.8)),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -328,7 +349,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 
   Widget _buildNewestRecipes() {
     return Padding(
@@ -374,13 +394,17 @@ class _HomePageState extends State<HomePage> {
                     itemCount: state.newestRecipes.length,
                     itemBuilder: (context, index) => RecipeItem(
                         recipe: state.newestRecipes[index],
-                        type: RecipeSearchType.NEWEST),
+                        type: RecipeSearchType.NEWEST,
+                        onSavedChange: (request) {
+                          _bloc.add(HomeChangeSavedRecipe(
+                              request: request, type: RecipeSearchType.NEWEST));
+                        }),
                     gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5,
-                        childAspectRatio: 0.75,
-                        crossAxisCount: 2));
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 5,
+                            childAspectRatio: 0.75,
+                            crossAxisCount: 2));
               }
               return Container();
             },

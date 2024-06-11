@@ -10,4 +10,7 @@ class SystemEvent with _$SystemEvent {
 
   const factory SystemEvent.languageChanged(Locale locale) =
       SystemLanguageChanged;
+
+
+
 }

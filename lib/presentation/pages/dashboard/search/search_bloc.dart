@@ -15,9 +15,10 @@ import '../../../../domain/usecase/search/search.usecase.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final GetSuggestionsUseCase _getSuggestRecipesUseCase;
   final SearchUseCase _searchUseCase;
-  final RefreshController recipeController = RefreshController(initialRefresh: false);
-  final RefreshController accountController = RefreshController(initialRefresh: false);
-  final RefreshController instructionController = RefreshController(initialRefresh: false);
+  late RefreshController recipeController;
+  late RefreshController accountController;
+  late RefreshController instructionController;
+
   SearchBloc(this._getSuggestRecipesUseCase, this._searchUseCase)
       : super(const SearchState()) {
     on<SearchErrorOccurred>(_onErrorOccurred);
@@ -39,57 +40,72 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   FutureOr<void> _onGetResult(
       SearchGetResult event, Emitter<SearchState> emit) async {
-    if(event.isRefresh) {
+    if (event.isRefresh) {
       emit(state.copyWith(
-      status: SearchStatus.loading,
-    ));
+        status: SearchStatus.loading,
+      ));
     }
-    final searchResult = await _searchUseCase(event.params);
+    try {
+      final searchResult = await _searchUseCase(event.params);
 
-    if(event.isRefresh){
-      emit(state.copyWith(
-        searchResult: searchResult,
-        currentRecipePage: 2,
-        currentAccountPage: 2,
-        currentInstructionPage: 2,
-        currentQuery: event.params.title,
-        status: SearchStatus.success,
-      ));
-    }else{
-      if(recipeController.isLoading) recipeController.loadComplete();
-      if(accountController.isLoading) accountController.loadComplete();
-      if(instructionController.isLoading) instructionController.loadComplete();
-      emit(state.copyWith(
-        searchResult: state.searchResult.copyWith(
-          recipes: [...state.searchResult.recipes, ...searchResult.recipes],
-          accounts: [...state.searchResult.accounts, ...searchResult.accounts],
-          instructions: [
-            ...state.searchResult.instructions,
-            ...searchResult.instructions
-          ],
-        ),
-        currentRecipePage: event.params.type == SearchType.recipe
-            ? state.currentRecipePage + 1
-            : state.currentRecipePage,
-        currentAccountPage: event.params.type == SearchType.account
-            ? state.currentAccountPage + 1
-            : state.currentAccountPage,
-        currentInstructionPage: event.params.type == SearchType.instruction
-            ? state.currentInstructionPage + 1
-            : state.currentInstructionPage,
-        status: SearchStatus.success,
-      ));
+      if (event.isRefresh) {
+        emit(state.copyWith(
+          searchResult: searchResult,
+          currentRecipePage: 2,
+          currentAccountPage: 2,
+          currentInstructionPage: 2,
+          currentQuery: event.params.title,
+          status: SearchStatus.success,
+        ));
+      } else {
+        if (recipeController.isLoading) recipeController.loadComplete();
+        if (accountController.isLoading) accountController.loadComplete();
+        if (instructionController.isLoading) {
+          instructionController.loadComplete();
+        }
+        emit(state.copyWith(
+          searchResult: state.searchResult.copyWith(
+            recipes: [...state.searchResult.recipes, ...searchResult.recipes],
+            accounts: [
+              ...state.searchResult.accounts,
+              ...searchResult.accounts
+            ],
+            instructions: [
+              ...state.searchResult.instructions,
+              ...searchResult.instructions
+            ],
+          ),
+          currentRecipePage: event.params.type == SearchType.recipe
+              ? state.currentRecipePage + 1
+              : state.currentRecipePage,
+          currentAccountPage: event.params.type == SearchType.account
+              ? state.currentAccountPage + 1
+              : state.currentAccountPage,
+          currentInstructionPage: event.params.type == SearchType.instruction
+              ? state.currentInstructionPage + 1
+              : state.currentInstructionPage,
+          status: SearchStatus.success,
+        ));
+      }
+    } catch (error) {
+      if (!event.isRefresh) {
+        if (recipeController.isLoading) recipeController.loadComplete();
+        if (recipeController.isRefresh) recipeController.refreshCompleted();
+        if (accountController.isLoading) accountController.loadComplete();
+        if (accountController.isRefresh) accountController.refreshCompleted();
+        if (instructionController.isLoading) {
+          instructionController.loadComplete();
+        }
+        if (instructionController.isRefresh) {
+          instructionController.refreshCompleted();
+        }
+      }
+      add(SearchErrorOccurred(BaseException.from(error)));
     }
   }
 
   @override
   void onError(Object error, StackTrace stackTrace) {
-    if(recipeController.isLoading) recipeController.loadComplete();
-    if(recipeController.isRefresh) recipeController.refreshCompleted();
-    if(accountController.isLoading) accountController.loadComplete();
-    if(accountController.isRefresh) accountController.refreshCompleted();
-    if(instructionController.isLoading) instructionController.loadComplete();
-    if(instructionController.isRefresh) instructionController.refreshCompleted();
     add(SearchErrorOccurred(BaseException.from(error)));
     super.onError(error, stackTrace);
   }

@@ -1,5 +1,5 @@
 import 'dart:core';
-
+import 'package:intl/intl.dart';
 extension NumberExtension on num {
   String formatNumber(){
 
@@ -20,5 +20,10 @@ extension NumberExtension on num {
     String secondsStr = seconds.toString().padLeft(2, '0');
 
     return '$minutesStr:$secondsStr';
+  }
+
+  String formatCurrency() {
+    final formatCurrency = NumberFormat('#,##0', 'en_US');
+    return formatCurrency.format(this);
   }
 }

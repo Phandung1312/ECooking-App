@@ -17,6 +17,8 @@ enum RecipeDetailsStatus {
   loadedComments,
   loadingSuggests,
   loadedSuggests,
+  updating,
+  updated,
   success,
   failure,
 }

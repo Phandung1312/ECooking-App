@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/account.item.dart';
 
@@ -20,6 +21,7 @@ class AccountTab extends StatefulWidget {
 }
 
 class _AccountTabState extends State<AccountTab> {
+
   void _onLoad() async {
     widget.bloc.add(SearchGetResult(
       params: SearchParams(
@@ -30,14 +32,18 @@ class _AccountTabState extends State<AccountTab> {
       isRefresh: false,
     ));
   }
-
-
+  @override
+  void initState() {
+    widget.bloc.accountController = RefreshController();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.85,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+    return Scrollbar(
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         onLoading: _onLoad,

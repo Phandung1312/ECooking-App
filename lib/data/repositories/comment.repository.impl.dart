@@ -2,6 +2,7 @@
 
 import 'package:injectable/injectable.dart';
 import 'package:pair/pair.dart';
+import 'package:uq_system_app/data/models/comment/comment.request.dart';
 
 import 'package:uq_system_app/domain/entities/comment.dart';
 import 'package:uq_system_app/domain/entities/params/paginate_comment_params.dart';
@@ -17,6 +18,12 @@ class CommentRepositoryImpl extends CommentRepository{
   Future<Pair<int, List<Comment>>> getComments(PaginateCommentParams commentParams) async{
     var result =  await _networkDataSource.getComments(commentParams.recipeId, commentParams.page, commentParams.perPage);
     return  Pair(result.total, result.data.map((e) => e.mapToEntity()).toList());
+  }
+
+  @override
+  Future<Comment> createComment(CommentRequest commentRequest) async{
+    var result = await _networkDataSource.createComment(commentRequest);
+    return result.data.mapToEntity();
   }
 
 }

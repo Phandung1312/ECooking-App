@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uq_system_app/data/models/account/account.response.dart';
 import 'package:uq_system_app/domain/entities/recipe.dart';
+
+import '../../../domain/entities/account.dart';
 part 'recipe.model.freezed.dart';
 part 'recipe.model.g.dart';
 @freezed
@@ -10,15 +12,17 @@ const RecipeModel._();
      required int id,
     required String title,
     String? content,
-    required int views,
-    required int likeCount,
+    int? views,
+    int? likeCount,
     String? cookTime,
     String? servers,
-    required int status,
-    required AccountResponse author,
+    int? status,
+    AccountResponse? author,
     String? imageUrl,
-    required bool isVideo,
-    required String createdAt,
+    bool? isVideo,
+    String? createdAt,
+    bool? isLiked,
+    bool? isSaved
   }) = _RecipeModel;
   factory RecipeModel.fromJson(Map<String, dynamic> json) =>
       _$RecipeModelFromJson(json);
@@ -27,15 +31,17 @@ const RecipeModel._();
       id: id,
       title:  title,
       content: content ?? "",
-      views: views,
-      likeCount: likeCount,
+      views: views ?? 0,
+      likeCount: likeCount ?? 0,
       cookTime: cookTime ?? "",
       servers: servers ?? "",
-      status: status,
-      account: author.mapToEntity(),
+      status: status ?? 0,
+      account: author?.mapToEntity() ?? const Account(),
       imageUrl: imageUrl ?? "",
-      isVideo: isVideo,
-      createdAt: createdAt,
+      isVideo: isVideo ?? false,
+      createdAt: createdAt ?? "",
+      isLiked: isLiked ?? false,
+      isSaved: isSaved ?? false
     );
   }
 }

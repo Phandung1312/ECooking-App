@@ -30,6 +30,6 @@ class CreateRecipeStatusListener extends BlocListener<CreateRecipeBloc, CreateRe
     required super.listener,
   }) : super(
           listenWhen: (previousState, currentState) =>
-              previousState.status != currentState.status && statuses.contains(currentState.status),
+              statuses.contains(currentState.status),
         );
 }

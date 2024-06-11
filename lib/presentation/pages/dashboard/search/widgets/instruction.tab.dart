@@ -27,14 +27,18 @@ class _InstructionTabState extends State<InstructionTab> {
       isRefresh: false,
     ));
   }
-
-
+  @override
+  void initState() {
+    widget.bloc.instructionController = RefreshController();
+    super.initState();
+  }
+  @override
+  void dispose() {
+      super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.85,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+    return Scrollbar(
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         onLoading: _onLoad,

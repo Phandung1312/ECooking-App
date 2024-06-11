@@ -7,6 +7,8 @@ class AppEnv {
 
   static String get baseUrl => _get('BASE_URL');
 
+  static String get baseSocketUrl => _get('BASE_SOCKET_URL');
+
   static String get appName => _get('APP_NAME');
 }
 

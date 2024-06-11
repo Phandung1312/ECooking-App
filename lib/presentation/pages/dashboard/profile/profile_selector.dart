@@ -13,7 +13,14 @@ class ProfileStatusSelector
           builder: (_, status) => builder(status),
         );
 }
-
+class ProfileSelector<T> extends BlocSelector<ProfileBloc, ProfileState, T>{
+  ProfileSelector({
+    required Widget Function(T data) builder,
+    required super.selector
+  }) : super(
+    builder: (_, data) => builder(data),
+  );
+}
 class ProfileStatusListener extends BlocListener<ProfileBloc, ProfileState> {
   ProfileStatusListener({
     required Iterable<ProfileStatus> statuses,

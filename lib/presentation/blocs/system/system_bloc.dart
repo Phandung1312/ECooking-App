@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:injectable/injectable.dart';
 import 'package:uq_system_app/core/themes/themes.dart';
 import 'package:uq_system_app/data/usecases/save_language.dart';
 import 'package:uq_system_app/presentation/blocs/system/system_event.dart';

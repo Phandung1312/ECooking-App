@@ -11,5 +11,6 @@ class Comment with _$Comment{
     @Default('') String createdAt,
     @Default(Account()) Account author,
     @Default([]) List<Comment> subComments,
+    @Default(false) bool isSending,
   }) = _Comment;
 }

@@ -6,6 +6,7 @@ part 'auth_state.freezed.dart';
 enum AuthStatus {
   initial,
   loading,
+  sessionExpired,
   success,
   failure,
 }

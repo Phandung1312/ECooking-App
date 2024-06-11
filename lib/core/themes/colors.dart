@@ -7,6 +7,7 @@ class AppColors {
   final Color tertiary;
   final Color accent;
   final Color background;
+  final Color secondaryBackground;
   final Color backgroundDark;
   final Color disabled;
   final Color information;
@@ -25,6 +26,7 @@ class AppColors {
     required this.secondary,
     required this.tertiary,
     required this.accent,
+    required this.secondaryBackground,
     required this.background,
     required this.backgroundDark,
     required this.disabled,
@@ -50,6 +52,7 @@ class AppColors {
       secondary: Color.lerp(secondary, other.secondary, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
       background: Color.lerp(background, other.background, t)!,
+      secondaryBackground: Color.lerp(secondaryBackground, other.secondaryBackground, t)!,
       backgroundDark: Color.lerp(backgroundDark, other.backgroundDark, t)!,
       disabled: Color.lerp(disabled, other.disabled, t)!,
       information: Color.lerp(information, other.information, t)!,

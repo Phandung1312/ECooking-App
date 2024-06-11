@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,7 @@ class InstructionItem extends StatelessWidget {
   final int previousEndTime;
   final int videoTime;
   final void Function(InstructionRequest instruction) onInstructionChange;
+  final void Function(File file, int position) onPickImage;
   final void Function()? onDelete;
 
   const InstructionItem({Key? key,
@@ -25,7 +27,7 @@ class InstructionItem extends StatelessWidget {
     this.videoTime = 0,
     required this.data,
     this.isVideo = false,
-    required this.onInstructionChange})
+    required this.onInstructionChange, required this.onPickImage})
       : super(key: key);
 
 
@@ -253,12 +255,7 @@ class InstructionItem extends StatelessWidget {
                         await ImagePicker().pickImage(
                             source: ImageSource.gallery);
                         if (returnedImage == null) return;
-                        onInstructionChange(data.copyWith(images: () {
-                          List<File> newImages = List<File>.from(data.images!);
-                          newImages.replaceRange(
-                              index, index + 1, [File(returnedImage.path)]);
-                          return newImages;
-                        }()));
+                        onPickImage(File(returnedImage.path), index );
                       },
                       child: Container(
                         height: 100,
@@ -266,9 +263,20 @@ class InstructionItem extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: const Color(0xFFF6F1EC),
                           borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            image: FileImage(data.images![index]),
-                            fit: BoxFit.cover,
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: data.images![index],
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => Container(
+                            height: 100,
+                            color: context.colors.hint,
+                          ),
+                          placeholder: (context, url) => Container(
+                            height: 100,
+                            color: context.colors.hint.withOpacity(0.5),
+                            child:  Center(
+                              child: CircularProgressIndicator(color: context.colors.secondary,),
+                            )
                           ),
                         ),
                       ),
@@ -284,10 +292,7 @@ class InstructionItem extends StatelessWidget {
                 final returnedImage =
                 await ImagePicker().pickImage(source: ImageSource.gallery);
                 if (returnedImage == null) return;
-                onInstructionChange(data.copyWith(images: [
-                  ...?data.images,
-                  File(returnedImage.path)
-                ]));
+                onPickImage(File(returnedImage.path), (data.images?.length ?? 0) );
               },
               child: Container(
                   height: 100,

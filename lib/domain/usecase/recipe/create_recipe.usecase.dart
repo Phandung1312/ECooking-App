@@ -1,6 +1,3 @@
-
-
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../core/bases/usecases/base_use_case.dart';
@@ -18,7 +15,4 @@ class CreateRecipeUseCase extends UseCase<RecipeDetails, RecipeDetailsRequest> {
   Future<RecipeDetails> call(RecipeDetailsRequest params) {
     return _recipeRepository.createRecipe(params);
   }
-
-
-
 }

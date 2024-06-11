@@ -13,6 +13,9 @@ class GoogleAuthHelper{
       return null;
     }
   }
+  static Future<void> signOut() async {
+    await _googleSignIn.signOut();
+  }
 }
 
 GoogleSignIn _googleSignIn = GoogleSignIn(

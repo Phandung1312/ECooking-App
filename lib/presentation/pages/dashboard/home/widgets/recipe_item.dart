@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:uq_system_app/core/extensions/string.dart';
 import 'package:uq_system_app/core/extensions/text_style.dart';
 import 'package:uq_system_app/core/extensions/theme.dart';
+import 'package:uq_system_app/data/models/recipe_feature/recipe_feature.request.dart';
 import 'package:uq_system_app/di/injector.dart';
 import 'package:uq_system_app/domain/entities/enum/enum.dart';
 import 'package:uq_system_app/domain/entities/recipe.dart';
@@ -15,8 +16,8 @@ import '../../../../../assets.gen.dart';
 class RecipeItem extends StatefulWidget {
   final Recipe recipe;
   final RecipeSearchType type;
-
-  const RecipeItem({super.key, required this.recipe, required this.type});
+  final void Function(RecipeFeatureRequest request)? onSavedChange;
+  const RecipeItem({super.key, required this.recipe, required this.type, this.onSavedChange});
 
   @override
   State<RecipeItem> createState() => _RecipeItemState();
@@ -30,7 +31,7 @@ class _RecipeItemState extends State<RecipeItem> {
         return _buildPopularRecipe();
       case RecipeSearchType.NEWEST:
         return _buildNewestRecipe();
-      case RecipeSearchType.SEARCH:
+      default:
         return _buildSearchRecipe();
     }
   }
@@ -39,6 +40,10 @@ class _RecipeItemState extends State<RecipeItem> {
     var userInfoHelper = getIt.get<UserInfoHelper>();
     var isLogged = await userInfoHelper.isUserLogged();
     if (isLogged) {
+      var request = RecipeFeatureRequest(
+          recipeId: widget.recipe.id,
+          status: widget.recipe.isSaved ? FeatureStatus.disable : FeatureStatus.enable);
+      widget.onSavedChange?.call(request);
     } else {
       if (context.mounted) {
         var result = await context.router.push(const LoginRoute());
@@ -77,7 +82,8 @@ class _RecipeItemState extends State<RecipeItem> {
                     child: CachedNetworkImage(
                       imageUrl: widget.recipe.imageUrl,
                       width: 320,
-                      fit: BoxFit.contain,
+                      height: 220,
+                      fit: BoxFit.cover,
                       errorWidget: (context, url, error) => Container(
                         height: 220,
                         color: context.colors.hint,
@@ -115,8 +121,10 @@ class _RecipeItemState extends State<RecipeItem> {
                     top: 5,
                     child: InkWell(
                       onTap: _saveRecipe,
-                      child: AssetGenImage(Assets.icons.png.icBookmark.path)
-                          .image(height: 32),
+                      child: AssetGenImage(widget.recipe.isSaved
+                          ? Assets.icons.png.icBookmarked.path
+                          : Assets.icons.png.icBookmark.path)
+                          .image(height: 32, color: widget.recipe.isSaved ? context.colors.secondary : const Color(0xFFDEDEDE)),
                     ))
               ],
             ),
@@ -149,11 +157,11 @@ class _RecipeItemState extends State<RecipeItem> {
                       style: context.typographies.caption2,
                     ),
                   ),
-                  AssetGenImage(Assets.icons.png.icFavorite.path).image(
+                  AssetGenImage(widget.recipe.isLiked ? Assets.icons.png.icFavoriteFill.path :  Assets.icons.png.icFavorite.path).image(
                       width: 18,
                       height: 18,
                       fit: BoxFit.cover,
-                      color: context.colors.text),
+                      color: !widget.recipe.isLiked ? context.colors.text : null),
                   const SizedBox(
                     width: 5,
                   ),
@@ -196,7 +204,9 @@ class _RecipeItemState extends State<RecipeItem> {
                     ),
                     child: CachedNetworkImage(
                       imageUrl: widget.recipe.imageUrl,
-                      fit: BoxFit.contain,
+                      height: 135,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                       errorWidget: (context, url, error) => Container(
                         height: 135,
                         color: context.colors.hint,
@@ -234,8 +244,10 @@ class _RecipeItemState extends State<RecipeItem> {
                   top: 5,
                   child: InkWell(
                     onTap: _saveRecipe,
-                    child: AssetGenImage(Assets.icons.png.icBookmark.path)
-                        .image(height: 24),
+                    child: AssetGenImage(widget.recipe.isSaved
+                        ? Assets.icons.png.icBookmarked.path
+                        : Assets.icons.png.icBookmark.path)
+                        .image(height: 24,color: widget.recipe.isSaved ? context.colors.secondary : const Color(0xFFDEDEDE)),
                   ),
                 )
               ],
@@ -269,11 +281,11 @@ class _RecipeItemState extends State<RecipeItem> {
                       style: context.typographies.caption2,
                     ),
                   ),
-                  AssetGenImage(Assets.icons.png.icFavorite.path).image(
+                  AssetGenImage(widget.recipe.isLiked ? Assets.icons.png.icFavoriteFill.path :  Assets.icons.png.icFavorite.path).image(
                       width: 18,
                       height: 18,
                       fit: BoxFit.cover,
-                      color: context.colors.text),
+                      color: !widget.recipe.isLiked ? context.colors.text : null),
                   const SizedBox(
                     width: 5,
                   ),
@@ -327,26 +339,27 @@ class _RecipeItemState extends State<RecipeItem> {
                       maxLines: 2,
                     ),
                     const Expanded(child: SizedBox()),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(widget.recipe.account.avatarUrl),
-                          backgroundColor: context.colors.hint,
-                          radius: 20,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          child: Text(
-                            widget.recipe.account.displayName,
-                            overflow: TextOverflow.ellipsis,
-                            style: context.typographies.caption2,
+                    if (widget.type == RecipeSearchType.SEARCH)
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(widget.recipe.account.avatarUrl),
+                            backgroundColor: context.colors.hint,
+                            radius: 20,
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Expanded(
+                            child: Text(
+                              widget.recipe.account.displayName,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.typographies.caption2,
+                            ),
+                          ),
+                        ],
+                      ),
                     const SizedBox(height: 10),
                     Text(
                       widget.recipe.createdAt.formatTimeAgo(),
@@ -355,11 +368,11 @@ class _RecipeItemState extends State<RecipeItem> {
                     ),
                     const SizedBox(height: 10),
                     Row(children: [
-                      AssetGenImage(Assets.icons.png.icFavorite.path).image(
+                      AssetGenImage(widget.recipe.isLiked ? Assets.icons.png.icFavoriteFill.path :  Assets.icons.png.icFavorite.path).image(
                           width: 18,
                           height: 18,
                           fit: BoxFit.cover,
-                          color: context.colors.text),
+                          color: !widget.recipe.isLiked ? context.colors.text : null),
                       const SizedBox(
                         width: 5,
                       ),
@@ -413,15 +426,18 @@ class _RecipeItemState extends State<RecipeItem> {
                 if (widget.recipe.isVideo)
                   AssetGenImage(Assets.icons.png.icVideo.path)
                       .image(width: 32, height: 32, fit: BoxFit.cover),
-                Positioned(
-                  right: 5,
-                  top: 5,
-                  child: InkWell(
-                    onTap: _saveRecipe,
-                    child: AssetGenImage(Assets.icons.png.icBookmark.path)
-                        .image(height: 24),
-                  ),
-                )
+               if(widget.type != RecipeSearchType.MY_RECIPE)
+                 Positioned(
+                   right: 5,
+                   top: 5,
+                   child: InkWell(
+                     onTap: _saveRecipe,
+                     child: AssetGenImage(widget.recipe.isSaved
+                         ? Assets.icons.png.icBookmarked.path
+                         : Assets.icons.png.icBookmark.path)
+                         .image(height: 24, color: widget.recipe.isSaved ? context.colors.secondary : const Color(0xFFDEDEDE)),
+                   ),
+                 )
               ],
             ),
           ],

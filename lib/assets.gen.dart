@@ -80,6 +80,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_nam.jpg
   AssetGenImage get imgNam => const AssetGenImage('assets/images/img_nam.jpg');
 
+  /// File path: assets/images/img_recipe.png
+  AssetGenImage get imgRecipe => const AssetGenImage('assets/images/img_recipe.png');
+
   /// File path: assets/images/img_suon.jpg
   AssetGenImage get imgSuon => const AssetGenImage('assets/images/img_suon.jpg');
 
@@ -101,6 +104,7 @@ class $AssetsImagesGen {
         imgMangTay,
         imgMuc,
         imgNam,
+        imgRecipe,
         imgSuon,
         imgTrung
       ];
@@ -124,6 +128,9 @@ class $AssetsIconsPngGen {
   /// File path: assets/icons/png/ic_camera_blue.png
   AssetGenImage get icCameraBlue => const AssetGenImage('assets/icons/png/ic_camera_blue.png');
 
+  /// File path: assets/icons/png/ic_chart.png
+  AssetGenImage get icChart => const AssetGenImage('assets/icons/png/ic_chart.png');
+
   /// File path: assets/icons/png/ic_clock.png
   AssetGenImage get icClock => const AssetGenImage('assets/icons/png/ic_clock.png');
 
@@ -135,6 +142,9 @@ class $AssetsIconsPngGen {
 
   /// File path: assets/icons/png/ic_favorite.png
   AssetGenImage get icFavorite => const AssetGenImage('assets/icons/png/ic_favorite.png');
+
+  /// File path: assets/icons/png/ic_favorite_fill.png
+  AssetGenImage get icFavoriteFill => const AssetGenImage('assets/icons/png/ic_favorite_fill.png');
 
   /// File path: assets/icons/png/ic_film.png
   AssetGenImage get icFilm => const AssetGenImage('assets/icons/png/ic_film.png');
@@ -153,6 +163,12 @@ class $AssetsIconsPngGen {
 
   /// File path: assets/icons/png/ic_home_selected.png
   AssetGenImage get icHomeSelected => const AssetGenImage('assets/icons/png/ic_home_selected.png');
+
+  /// File path: assets/icons/png/ic_info.png
+  AssetGenImage get icInfo => const AssetGenImage('assets/icons/png/ic_info.png');
+
+  /// File path: assets/icons/png/ic_location.png
+  AssetGenImage get icLocation => const AssetGenImage('assets/icons/png/ic_location.png');
 
   /// File path: assets/icons/png/ic_next.png
   AssetGenImage get icNext => const AssetGenImage('assets/icons/png/ic_next.png');
@@ -194,16 +210,20 @@ class $AssetsIconsPngGen {
         icBookmark,
         icBookmarked,
         icCameraBlue,
+        icChart,
         icClock,
         icCooking,
         icFacebook,
         icFavorite,
+        icFavoriteFill,
         icFilm,
         icGallery,
         icGoogle,
         icHello,
         icHome,
         icHomeSelected,
+        icInfo,
+        icLocation,
         icNext,
         icNotification,
         icNotificationSelected,

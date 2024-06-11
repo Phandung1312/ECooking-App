@@ -80,50 +80,66 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           }
           return DefaultTabController(
             length: 4,
-            child: Column(
-              children: [
-                TabBar(
-                    overlayColor: MaterialStateProperty.all(Colors.transparent),
-                    indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                            color: context.colors.primary, width: 2)),
-                    indicatorSize: TabBarIndicatorSize.label,
-                    labelColor: context.colors.primary,
-                    indicatorWeight: 2,
-                    labelStyle: context.typographies.caption1Bold,
-                    unselectedLabelStyle: context.typographies.caption1,
-                    dividerColor: context.colors.hint.withOpacity(0.5),
-                    tabs: const [
-                      Tab(
-                        text: 'Tất cả',
+            child: Builder(
+              builder: (context) {
+                return Column(
+                  children: [
+                    TabBar(
+                        overlayColor: MaterialStateProperty.all(Colors.transparent),
+                        indicator: UnderlineTabIndicator(
+                            borderSide: BorderSide(
+                                color: context.colors.primary, width: 2)),
+                        indicatorSize: TabBarIndicatorSize.label,
+                        labelColor: context.colors.primary,
+                        indicatorWeight: 2,
+                        labelStyle: context.typographies.caption1Bold,
+                        unselectedLabelStyle: context.typographies.caption1,
+                        dividerColor: context.colors.hint.withOpacity(0.5),
+                        tabs: const [
+                          Tab(
+                            text: 'Tất cả',
+                          ),
+                          Tab(
+                            text: 'Công thức',
+                          ),
+                          Tab(
+                            text: 'Công đoạn',
+                          ),
+                          Tab(
+                            text: 'Người dùng',
+                          ),
+                        ]),
+                    Expanded(
+                        child: Container(
+                      color: const Color(0xFFF6F1EC).withOpacity(0.5),
+                      child: AnimatedBuilder(
+
+                        animation: DefaultTabController.of(context),
+                        builder: (context, child){
+                          switch (DefaultTabController.of(context).index) {
+                            case 0:
+                              return _buildAllTap(context);
+                            case 1:
+                              return RecipeTab(
+                                bloc: _bloc,
+                              );
+                            case 2:
+                              return InstructionTab(
+                                bloc: _bloc,
+                              );
+                            case 3:
+                              return AccountTab(
+                                bloc: _bloc,
+                              );
+                            default:
+                              return Container();
+                          }
+                        },
                       ),
-                      Tab(
-                        text: 'Công thức',
-                      ),
-                      Tab(
-                        text: 'Công đoạn',
-                      ),
-                      Tab(
-                        text: 'Người dùng',
-                      ),
-                    ]),
-                Expanded(
-                    child: Container(
-                  color: const Color(0xFFF6F1EC).withOpacity(0.5),
-                  child: SingleChildScrollView(
-                    physics: const ClampingScrollPhysics(),
-                    child: AutoScaleTabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _buildAllTap(context),
-                        RecipeTab(bloc: _bloc,),
-                         InstructionTab(bloc: _bloc,),
-                         AccountTab(bloc: _bloc,),
-                      ],
-                    ),
-                  ),
-                ))
-              ],
+                    ))
+                  ],
+                );
+              }
             ),
           );
         },
@@ -159,174 +175,177 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   }
 
   Widget _buildAllTap(BuildContext context) {
-    return SearchSelector(
-        selector: (state) => state.searchResult,
-        builder: (data) {
-          if (data.instructions.isEmpty &&
-              data.recipes.isEmpty &&
-              data.accounts.isEmpty) {
-            return const Column(
-              children: [
-                SizedBox(
-                  height: 200,
-                ),
-                Text('Không tìm thấy kết quả phù hợp'),
-              ],
-            );
-          } else {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
+      child: SearchSelector(
+          selector: (state) => state.searchResult,
+          builder: (data) {
+            if (data.instructions.isEmpty &&
+                data.recipes.isEmpty &&
+                data.accounts.isEmpty) {
+              return const Column(
                 children: [
-                  if (data.recipes.isNotEmpty) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Công thức ',
-                            style: context.typographies.title3),
-                        if (data.recipes.length > 3) ...[
-                          InkWell(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Xem thêm",
-                                  style: context.typographies.caption2
-                                      .withColor(context.colors.hint),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: context.colors.hint,
-                                  size: 14,
-                                )
-                              ],
-                            ),
-                          )
-                        ]
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount:
-                          data.recipes.length > 3 ? 3 : data.recipes.length,
-                      itemBuilder: (context, index) {
-                        final recipe = data.recipes[index];
-                        return RecipeItem(
-                            recipe: recipe, type: RecipeSearchType.SEARCH);
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 10);
-                      },
-                    )
-                  ],
-                  if (data.accounts.isNotEmpty) ...[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Người dùng',
-                            style: context.typographies.title3),
-                        if (data.accounts.length > 3) ...[
-                          InkWell(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Xem thêm",
-                                  style: context.typographies.caption2
-                                      .withColor(context.colors.hint),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: context.colors.hint,
-                                  size: 14,
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount:
-                          data.accounts.length > 3 ? 3 : data.accounts.length,
-                      itemBuilder: (context, index) {
-                        final account = data.accounts[index];
-                        return AccountItem(account: account);
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 10);
-                      },
-                    )
-                  ],
-                  if (data.instructions.isNotEmpty) ...[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Công đoạn chế biến',
-                            style: context.typographies.title3),
-                        if (data.instructions.length > 3) ...[
-                          InkWell(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Xem thêm",
-                                  style: context.typographies.caption2
-                                      .withColor(context.colors.hint),
-                                ),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: context.colors.hint,
-                                  size: 14,
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: data.instructions.length > 3
-                          ? 3
-                          : data.instructions.length,
-                      itemBuilder: (context, index) {
-                        final instruction = data.instructions[index];
-                        return InstructionItem(instruction: instruction);
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const SizedBox(height: 10);
-                      },
-                    )
-                  ]
+                  SizedBox(
+                    height: 200,
+                  ),
+                  Text('Không tìm thấy kết quả phù hợp'),
                 ],
-              ),
-            );
-          }
-        });
+              );
+            } else {
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (data.recipes.isNotEmpty) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Công thức ',
+                              style: context.typographies.title3),
+                          if (data.recipes.length > 3) ...[
+                            InkWell(
+                              onTap: () {},
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Xem thêm",
+                                    style: context.typographies.caption2
+                                        .withColor(context.colors.hint),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: context.colors.hint,
+                                    size: 14,
+                                  )
+                                ],
+                              ),
+                            )
+                          ]
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            data.recipes.length > 3 ? 3 : data.recipes.length,
+                        itemBuilder: (context, index) {
+                          final recipe = data.recipes[index];
+                          return RecipeItem(
+                              recipe: recipe, type: RecipeSearchType.SEARCH);
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 10);
+                        },
+                      )
+                    ],
+                    if (data.accounts.isNotEmpty) ...[
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Người dùng',
+                              style: context.typographies.title3),
+                          if (data.accounts.length > 3) ...[
+                            InkWell(
+                              onTap: () {},
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Xem thêm",
+                                    style: context.typographies.caption2
+                                        .withColor(context.colors.hint),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: context.colors.hint,
+                                    size: 14,
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            data.accounts.length > 3 ? 3 : data.accounts.length,
+                        itemBuilder: (context, index) {
+                          final account = data.accounts[index];
+                          return AccountItem(account: account);
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 10);
+                        },
+                      )
+                    ],
+                    if (data.instructions.isNotEmpty) ...[
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Công đoạn chế biến',
+                              style: context.typographies.title3),
+                          if (data.instructions.length > 3) ...[
+                            InkWell(
+                              onTap: () {},
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Xem thêm",
+                                    style: context.typographies.caption2
+                                        .withColor(context.colors.hint),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: context.colors.hint,
+                                    size: 14,
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: data.instructions.length > 3
+                            ? 3
+                            : data.instructions.length,
+                        itemBuilder: (context, index) {
+                          final instruction = data.instructions[index];
+                          return InstructionItem(instruction: instruction);
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(height: 10);
+                        },
+                      )
+                    ]
+                  ],
+                ),
+              );
+            }
+          }),
+    );
   }
 }

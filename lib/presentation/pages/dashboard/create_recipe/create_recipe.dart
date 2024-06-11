@@ -1,11 +1,14 @@
+import 'dart:ffi';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pair/pair.dart';
 import 'package:uq_system_app/assets.gen.dart';
 import 'package:uq_system_app/core/extensions/text_style.dart';
 import 'package:uq_system_app/core/extensions/theme.dart';
@@ -24,6 +27,10 @@ import 'create_recipe_bloc.dart';
 
 @RoutePage()
 class CreateRecipePage extends StatefulWidget {
+  final int? recipeId;
+
+  const CreateRecipePage({required this.recipeId});
+
   @override
   State<CreateRecipePage> createState() => _CreateRecipePageState();
 }
@@ -32,9 +39,17 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
   final CreateRecipeBloc _bloc = getIt.get<CreateRecipeBloc>();
   late VideoPlayerController _videoPlayerController;
   late ChewieController _chewieController;
-  File? _videoFile;
-  int videoTime = 0;
+  bool isVideo = false;
+  ValueNotifier<int> videoTimeNotifier = ValueNotifier(0);
   final picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.recipeId != null) {
+      _bloc.add(CreateRecipeEvent.load(widget.recipeId!));
+    }
+  }
 
   @override
   void dispose() {
@@ -46,20 +61,8 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
   _pickVideo() async {
     final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
     if (pickedFile != null) {
-      _videoFile = File(pickedFile.path);
-      _videoPlayerController = VideoPlayerController.file(_videoFile!)
-        ..initialize().then((_) {
-          _chewieController = ChewieController(
-            videoPlayerController: _videoPlayerController,
-            autoPlay: false,
-            looping: false,
-            aspectRatio: _videoPlayerController.value.aspectRatio,
-          );
-          videoTime = _videoPlayerController.value.duration.inSeconds;
-          _bloc.add(CreateRecipeEvent.update(
-              _bloc.state.recipeDetailsRequest.copyWith(video: _videoFile)));
-          setState(() {});
-        });
+      isVideo = true;
+      _bloc.add(CreateRecipeEvent.uploadVideo(File(pickedFile.path)));
     }
   }
 
@@ -79,15 +82,24 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                 Fluttertoast.showToast(
                     msg: state.createdRecipe.status == RecipeStatus.draft
                         ? 'Lưu thành công'
-                        : 'Đăng tải thành công',
+                        : _bloc.state.recipeDetailsRequest.status ==
+                                RecipeStatus.draft
+                            ? 'Đăng tải thành công'
+                            : 'Cập nhật thành công',
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     timeInSecForIosWeb: 1,
                     backgroundColor: context.colors.background,
                     textColor: context.colors.primary,
                     fontSize: 16.0);
-                context.router
-                    .replace(RecipeDetailsRoute(id: state.createdRecipe.id, ));
+                if (widget.recipeId != null) {
+                  context.router.pop(true);
+                } else {
+                  context.router.pop(true);
+                  context.router.push(RecipeDetailsRoute(
+                    id: state.createdRecipe.id,
+                  ));
+                }
                 return;
               }
               if (state.status == CreateRecipeStatus.failure) {
@@ -105,7 +117,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
         ],
         child: Scaffold(
           body: CustomScrollView(
-                physics: const ClampingScrollPhysics(),
+              physics: const ClampingScrollPhysics(),
               slivers: [
                 SliverAppBar(
                   floating: true,
@@ -127,6 +139,10 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                   actions: [
                     CreateRecipeSelector(
                       builder: (data) {
+                        if (_bloc.state.recipeDetailsRequest.status !=
+                            RecipeStatus.draft) {
+                          return const SizedBox.shrink();
+                        }
                         return ElevatedButton(
                           onPressed: data
                               ? () {
@@ -159,15 +175,21 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                     ),
                     CreateRecipeSelector(
                       builder: (data) => ElevatedButton(
-                        onPressed:data ? () {
-                          _bloc.add(const CreateRecipeEvent.create(
-                              RecipeStatus.public));
-                        } : null,
+                        onPressed: data
+                            ? () {
+                                _bloc.add(const CreateRecipeEvent.create(
+                                    RecipeStatus.public));
+                              }
+                            : null,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 25, vertical: 10),
-                          backgroundColor: data? Colors.white : context.colors.hint.withOpacity(0.2),
-                          surfaceTintColor: data? Colors.white : context.colors.hint.withOpacity(0.2),
+                          backgroundColor: data
+                              ? Colors.white
+                              : context.colors.hint.withOpacity(0.2),
+                          surfaceTintColor: data
+                              ? Colors.white
+                              : context.colors.hint.withOpacity(0.2),
                           shape: RoundedRectangleBorder(
                             side: BorderSide(
                                 color: data
@@ -178,7 +200,10 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                           ),
                         ),
                         child: Text(
-                          'Đăng tải',
+                          _bloc.state.recipeDetailsRequest.status ==
+                                  RecipeStatus.draft
+                              ? 'Đăng tải'
+                              : 'Cập nhật',
                           style: context.typographies.caption1Bold.withColor(
                               data ? context.colors.secondary : Colors.white),
                         ),
@@ -207,18 +232,33 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                           final returnedImage = await ImagePicker()
                               .pickImage(source: ImageSource.gallery);
                           if (returnedImage == null) return;
-                          _bloc.add(CreateRecipeEvent.update(
-                              data.copyWith(image: File(returnedImage.path))));
+                          _bloc.add(CreateRecipeEvent.uploadImage(
+                              file: File(returnedImage.path),
+                              imagePickType: ImagePickType.recipe));
                         },
                         child: Container(
                           height: 250,
                           width: double.infinity,
                           color: context.colors.hint.withOpacity(0.2),
                           child: data.image != null
-                              ? Image.file(data.image!,
-                                  height: 250,
+                              ? CachedNetworkImage(
+                                  imageUrl: data.image ?? "",
                                   fit: BoxFit.cover,
-                                  width: double.infinity)
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                    height: 250,
+                                    color: context.colors.hint,
+                                  ),
+                                  placeholder: (context, url) => Container(
+                                    height: 250,
+                                    color: context.colors.hint.withOpacity(0.5),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        color: context.colors.secondary,
+                                      ),
+                                    ),
+                                  ),
+                                )
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -257,7 +297,11 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                 ),
                 _buildDescriptions(),
                 _buildIngredients(),
-                _buildInstructions()
+                CreateRecipeSelector(
+                    selector: (state) => state.recipeDetailsRequest.video,
+                    builder: (data) {
+                      return _buildInstructions();
+                    })
               ]),
         ),
       ),
@@ -274,100 +318,148 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
             height: 15,
           ),
           CreateRecipeSelector(
-              builder: (data) {
-                if (_videoFile == null) {
-                  return InkWell(
-                    onTap: _pickVideo,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AssetGenImage(Assets.icons.png.icFilm.path).image(
-                            width: 30,
-                            fit: BoxFit.contain,
-                            color: context.colors.secondary),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text("Thêm video cho món ăn",
-                            style: context.typographies.bodyBold
-                                .copyWith(color: context.colors.secondary))
-                      ],
-                    ),
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      Container(
-                          color: Colors.black,
-                          height: 300,
-                          child: Chewie(controller: _chewieController)),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                                color: context.colors.secondary, width: 1),
+            selector: (state) => state.recipeDetailsRequest.video,
+            builder: (data) {
+              if (data == null) {
+                return CreateRecipeStatusSelector(
+                  builder: (status) {
+                    if (status == CreateRecipeStatus.uploadingVideo) {
+                      return Column(
+                        children: [
+                          Center(
+                            child: CircularProgressIndicator(
+                              color: context.colors.secondary,
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              InkWell(
-                                onTap: _pickVideo,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.mode_edit_outline_outlined,
-                                      color: context.colors.secondary,
-                                      size: 20,
-                                    ),
-                                    Text("Chỉnh sửa",
-                                        style: context.typographies.body
-                                            .withColor(
-                                                context.colors.secondary)),
-                                  ],
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Text("Đang tải video lên, vui lòng chờ...",
+                              style: context.typographies.body
+                                  .copyWith(color: context.colors.secondary))
+                        ],
+                      );
+                    }
+                    return InkWell(
+                      onTap: _pickVideo,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AssetGenImage(Assets.icons.png.icFilm.path).image(
+                              width: 30,
+                              fit: BoxFit.contain,
+                              color: context.colors.secondary),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text("Thêm video cho món ăn",
+                              style: context.typographies.bodyBold
+                                  .copyWith(color: context.colors.secondary))
+                        ],
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return Column(
+                  children: [
+                    Container(
+                        color: Colors.black,
+                        height: 300,
+                        child: FutureBuilder(
+                          future: () async {
+                            _videoPlayerController =
+                                VideoPlayerController.networkUrl(
+                                    Uri.parse(data));
+                            await _videoPlayerController.initialize();
+                            videoTimeNotifier.value =
+                                _videoPlayerController.value.duration.inSeconds;
+                          }(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: context.colors.secondary,
                                 ),
+                              );
+                            }
+                            _chewieController = ChewieController(
+                              videoPlayerController: _videoPlayerController,
+                              aspectRatio:
+                                  _videoPlayerController.value.aspectRatio,
+                              autoPlay: true,
+                              looping: false,
+                            );
+                            return Chewie(controller: _chewieController);
+                          },
+                        )),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: context.colors.secondary, width: 1),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            InkWell(
+                              onTap: _pickVideo,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.mode_edit_outline_outlined,
+                                    color: context.colors.secondary,
+                                    size: 20,
+                                  ),
+                                  Text("Chỉnh sửa",
+                                      style: context.typographies.body
+                                          .withColor(context.colors.secondary)),
+                                ],
                               ),
-                              Text(" | ",
-                                  style: context.typographies.body
-                                      .withColor(context.colors.secondary)),
-                              InkWell(
-                                onTap: () {
-                                  showAlertDialog(
-                                      context: context,
-                                      messages: [
-                                        'Bạn có chắc chắn muốn xóa video này không?'
-                                      ],
-                                      onTap: () {
-                                        _videoFile?.delete();
-                                        _videoFile = null;
-                                        _videoPlayerController.dispose();
-                                        _chewieController.dispose();
-                                        setState(() {});
-                                      });
-                                },
-                                child:
-                                    AssetGenImage(Assets.icons.png.icTrash.path)
-                                        .image(
-                                            width: 20,
-                                            fit: BoxFit.contain,
-                                            color: context.colors.secondary),
-                              ),
-                            ],
-                          ),
+                            ),
+                            Text(" | ",
+                                style: context.typographies.body
+                                    .withColor(context.colors.secondary)),
+                            InkWell(
+                              onTap: () {
+                                showAlertDialog(
+                                    context: context,
+                                    messages: [
+                                      'Bạn có chắc chắn muốn xóa video này không?'
+                                    ],
+                                    onTap: () {
+                                      _videoPlayerController.dispose();
+                                      _chewieController.dispose();
+                                      _bloc.add(CreateRecipeEvent.update(_bloc
+                                          .state.recipeDetailsRequest
+                                          .copyWith(video: null)));
+                                    });
+                              },
+                              child:
+                                  AssetGenImage(Assets.icons.png.icTrash.path)
+                                      .image(
+                                          width: 20,
+                                          fit: BoxFit.contain,
+                                          color: context.colors.secondary),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  );
-                }
-              },
-              selector: (state) => state.recipeDetailsRequest.video),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
           const SizedBox(
             height: 15,
           ),
@@ -622,9 +714,9 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                       index: index,
                       previousEndTime:
                           index == 0 ? 0 : data[index - 1].endAt ?? 0,
-                      videoTime: videoTime,
+                      videoTime: videoTimeNotifier.value,
                       data: instruction,
-                      isVideo: _videoFile != null,
+                      isVideo: isVideo,
                       onInstructionChange: (value) {
                         _bloc.add(CreateRecipeEvent.updateInstruction(
                             instruction: value, index: index));
@@ -632,6 +724,12 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                       onDelete: () {
                         _bloc.add(
                             CreateRecipeEvent.removeInstruction(index: index));
+                      },
+                      onPickImage: (File file, int position) {
+                        _bloc.add(CreateRecipeEvent.uploadImage(
+                            file: file,
+                            positionPair: Pair(index, position),
+                            imagePickType: ImagePickType.instruction));
                       },
                     );
                   },

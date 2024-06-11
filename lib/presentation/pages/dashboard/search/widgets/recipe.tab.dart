@@ -18,8 +18,15 @@ class RecipeTab extends StatefulWidget {
 }
 
 class _RecipeTabState extends State<RecipeTab> {
-
-
+  @override
+  void initState() {
+    super.initState();
+    widget.bloc.recipeController = RefreshController();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
   void _onLoad() async {
     widget.bloc.add(SearchGetResult(
       params: SearchParams(
@@ -33,10 +40,7 @@ class _RecipeTabState extends State<RecipeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.85,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+    return Scrollbar(
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         onLoading: _onLoad,
@@ -73,4 +77,5 @@ class _RecipeTabState extends State<RecipeTab> {
       ),
     );
   }
+
 }

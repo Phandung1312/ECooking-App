@@ -11,6 +11,7 @@ import 'package:uq_system_app/core/extensions/text_style.dart';
 import 'package:uq_system_app/core/extensions/theme.dart';
 import 'package:uq_system_app/di/injector.dart';
 import 'package:uq_system_app/domain/entities/account.dart';
+import 'package:uq_system_app/domain/entities/params/follow.params.dart';
 import 'package:uq_system_app/domain/entities/recipe_details.dart';
 import 'package:uq_system_app/helpers/user_info.helper.dart';
 import 'package:uq_system_app/presentation/navigation/navigation.dart';
@@ -72,138 +73,219 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     return BlocProvider.value(
       value: _bloc,
       child: Scaffold(
-        body: RecipeDetailsBuilder(
-          statuses: const [
-            RecipeDetailsStatus.loading,
-            RecipeDetailsStatus.success
+        body: MultiBlocListener(
+          listeners: [
+            BlocListener<RecipeDetailsBloc, RecipeDetailsState>(
+              listener: (context, state) {
+                if (state.status == RecipeDetailsStatus.failure) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(
+                        'Lỗi',
+                        style: context.typographies.title3,
+                      ),
+                      content: Text(
+                        'Đã có lỗi không mong muốn xảy ra',
+                        style: context.typographies.body,
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child:
+                              Text('OK', style: context.typographies.bodyBold),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            context.router.pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
           ],
-          builder: (BuildContext context, RecipeDetailsState state) {
-            if (state.status == RecipeDetailsStatus.loading) {
-              return Center(
-                  child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(context.colors.secondary),
-              ));
-            }
+          child: RecipeDetailsBuilder(
+            statuses: const [
+              RecipeDetailsStatus.loading,
+              RecipeDetailsStatus.success
+            ],
+            builder: (BuildContext context, RecipeDetailsState state) {
+              if (state.status == RecipeDetailsStatus.loading) {
+                return Center(
+                    child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(context.colors.secondary),
+                ));
+              }
 
-            if (state.status == RecipeDetailsStatus.success) {
-              final recipe = state.recipeDetails;
+              if (state.status == RecipeDetailsStatus.success) {
+                final recipe = state.recipeDetails;
 
-              return CustomScrollView(
-                controller: _scrollController,
-                physics: const ClampingScrollPhysics(),
-                slivers: [
-                  if (recipe.videoUrl.isNotEmpty)
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: SliverAppBarDelegate(
-                        minHeight: kToolbarHeight + 300,
-                        maxHeight:  kToolbarHeight + 300,
-                        child: Container(
-                          color: Colors.white,
-                          child: Column(
-                            children: [
-                              AppBar(
-                                leading: IconButton(
-                                  icon: const Icon(Icons.arrow_back),
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    context.router.pop();
-                                  },
-                                ),
-                                actions: [
-                                  IconButton(
-                                    icon: const Icon(Icons.favorite_border),
+                return CustomScrollView(
+                  controller: _scrollController,
+                  physics: const ClampingScrollPhysics(),
+                  slivers: [
+                    if (recipe.videoUrl.isNotEmpty)
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: SliverAppBarDelegate(
+                          minHeight: kToolbarHeight + 300,
+                          maxHeight: kToolbarHeight + 300,
+                          child: Container(
+                            color: Colors.white,
+                            child: Column(
+                              children: [
+                                AppBar(
+                                  leading: IconButton(
+                                    icon: const Icon(Icons.arrow_back),
                                     color: Colors.white,
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      context.router.pop();
+                                    },
                                   ),
-                                  if (userAccount?.id != recipe.author.id)
+                                  actions: [
+                                    if (userAccount?.id != recipe.author.id)
+                                      IconButton(
+                                        icon: const Icon(
+                                            Icons.bookmark_border_outlined),
+                                        color: Colors.white,
+                                        onPressed: () {},
+                                      )
+                                    else
+                                      IconButton(
+                                        icon: const Icon(Icons.edit),
+                                        color: Colors.white,
+                                        onPressed: () async {
+                                          var result = await context.router
+                                              .push(CreateRecipeRoute(
+                                                  recipeId: recipe.id));
+                                          if (result != null) {
+                                            _bloc.add(
+                                                RecipeDetailsLoad(widget.id));
+                                          }
+                                        },
+                                      ),
                                     IconButton(
-                                      icon: const Icon(
-                                          Icons.bookmark_border_outlined),
-                                      color: Colors.white,
-                                      onPressed: () {},
-                                    )
-                                  else
-                                    IconButton(
-                                      icon: const Icon(Icons.edit),
+                                      icon: const Icon(Icons.more_vert),
                                       color: Colors.white,
                                       onPressed: () {},
                                     ),
-                                  IconButton(
-                                    icon: const Icon(Icons.more_vert),
-                                    color: Colors.white,
-                                    onPressed: () {},
-                                  ),
-                                ],
-                                backgroundColor: Colors.red,
-                                surfaceTintColor: Colors.red,
-                              ),
-                              _buildBackground(recipe),
-                            ],
+                                  ],
+                                  backgroundColor: Colors.red,
+                                  surfaceTintColor: Colors.red,
+                                ),
+                                _buildBackground(recipe),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  else ...[
-                    SliverAppBar(
-                        pinned: true,
-                        forceElevated: true,
-                        elevation: 2,
-                        shadowColor: context.colors.hint.withOpacity(0.6),
-                        backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
-                        expandedHeight: 350,
-                        leading: AnimatedBuilder(
-                          animation: _scrollController,
-                          builder: (context, child) {
-                            return IconButton(
-                              icon: const Icon(Icons.arrow_back),
-                              color: _scrollController.hasClients &&
-                                      _scrollController.offset > 200
-                                  ? Colors.black
-                                  : Colors.white,
-                              onPressed: () {
-                                context.router.pop();
-                              },
-                            );
-                          },
-                        ),
-                        actions: [
-                          AnimatedBuilder(
+                      )
+                    else ...[
+                      SliverAppBar(
+                          pinned: true,
+                          forceElevated: true,
+                          elevation: 2,
+                          shadowColor: context.colors.hint.withOpacity(0.6),
+                          backgroundColor: Colors.white,
+                          surfaceTintColor: Colors.white,
+                          expandedHeight: 350,
+                          leading: AnimatedBuilder(
                             animation: _scrollController,
                             builder: (context, child) {
                               return IconButton(
-                                icon: const Icon(Icons.favorite_border),
+                                icon: const Icon(Icons.arrow_back),
                                 color: _scrollController.hasClients &&
                                         _scrollController.offset > 200
                                     ? Colors.black
                                     : Colors.white,
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.router.pop();
+                                },
                               );
                             },
                           ),
-                          if (userAccount?.id != recipe.author.id)
+                          actions: [
                             AnimatedBuilder(
                               animation: _scrollController,
                               builder: (context, child) {
-                                return IconButton(
-                                  icon: const Icon(
-                                      Icons.bookmark_border_outlined),
-                                  color: _scrollController.hasClients &&
-                                          _scrollController.offset > 200
-                                      ? Colors.black
-                                      : Colors.white,
-                                  onPressed: () {},
+                                return RecipeDetailsSelector(
+                                  selector: (state) =>
+                                      state.recipeDetails.isFavorite,
+                                  builder: (data) => IconButton(
+                                    icon: Icon(data
+                                        ? Icons.favorite
+                                        : Icons.favorite_border),
+                                    color: _scrollController.hasClients &&
+                                            _scrollController.offset > 200
+                                        ? data
+                                            ? Colors.red
+                                            : Colors.black
+                                        : data
+                                            ? Colors.red
+                                            : Colors.white,
+                                    onPressed: () {
+                                      _bloc.add(
+                                          const RecipeDetailsChangeFavorite());
+                                    },
+                                  ),
                                 );
                               },
-                            )
-                          else
+                            ),
+                            if (userAccount?.id != recipe.author.id)
+                              AnimatedBuilder(
+                                animation: _scrollController,
+                                builder: (context, child) {
+                                  return RecipeDetailsSelector(
+                                    selector: (state) =>
+                                        state.recipeDetails.isSaved,
+                                    builder: (data) => IconButton(
+                                      icon: Icon(data
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_border_outlined),
+                                      color: _scrollController.hasClients &&
+                                              _scrollController.offset > 200
+                                          ? data
+                                              ? Colors.red
+                                              : Colors.black
+                                          : data
+                                              ? Colors.red
+                                              : Colors.white,
+                                      onPressed: () {
+                                        _bloc.add(
+                                          const RecipeDetailsChangeSaved(),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              )
+                            else
+                              AnimatedBuilder(
+                                animation: _scrollController,
+                                builder: (context, child) {
+                                  return IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    color: _scrollController.hasClients &&
+                                            _scrollController.offset > 200
+                                        ? Colors.black
+                                        : Colors.white,
+                                    onPressed: () async {
+                                      var result = await context.router.push(
+                                          CreateRecipeRoute(
+                                              recipeId: recipe.id));
+                                      if (result != null) {
+                                        _bloc.add(RecipeDetailsLoad(widget.id));
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
                             AnimatedBuilder(
                               animation: _scrollController,
                               builder: (context, child) {
                                 return IconButton(
-                                  icon: const Icon(Icons.edit),
+                                  icon: const Icon(Icons.more_vert),
                                   color: _scrollController.hasClients &&
                                           _scrollController.offset > 200
                                       ? Colors.black
@@ -212,100 +294,111 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                                 );
                               },
                             ),
-                          AnimatedBuilder(
-                            animation: _scrollController,
-                            builder: (context, child) {
-                              return IconButton(
-                                icon: const Icon(Icons.more_vert),
-                                color: _scrollController.hasClients &&
-                                        _scrollController.offset > 200
-                                    ? Colors.black
-                                    : Colors.white,
-                                onPressed: () {},
-                              );
-                            },
-                          ),
-                        ],
-                        flexibleSpace: FlexibleSpaceBar(
-                            background: _buildBackground(recipe))),
-                  ],
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            recipe.title,
-                            style: context.typographies.title2
-                                .withColor(context.colors.text),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              AssetGenImage(Assets.icons.png.icFavorite.path)
-                                  .image(
-                                      width: 24, height: 24, fit: BoxFit.cover),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(recipe.likeCount.formatNumber(),
-                                  style: context.typographies.body.copyWith(
-                                      color: context.colors.text,
-                                      fontSize: 24)),
-                              const SizedBox(width: 50),
-                              AssetGenImage(Assets.icons.png.icView.path).image(
-                                  width: 24,
-                                  height: 24,
-                                  fit: BoxFit.cover,
-                                  color: context.colors.text),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(recipe.views.formatNumber(),
-                                  style: context.typographies.body.copyWith(
-                                      color: context.colors.text,
-                                      fontSize: 24)),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          _buildAuthor(recipe),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          _buildDescription(recipe),
-                          _buildIngredients(recipe),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          _buildInstructions(recipe),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          _buildComments(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          _buildSuggests(),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
+                          ],
+                          flexibleSpace: FlexibleSpaceBar(
+                              background: _buildBackground(recipe))),
+                    ],
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              recipe.title,
+                              style: context.typographies.title2
+                                  .withColor(context.colors.text),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            RecipeDetailsSelector(
+                                selector: (state) =>
+                                    state.recipeDetails.isFavorite,
+                                builder: (data) {
+                                  return Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          _bloc.add(
+                                              const RecipeDetailsChangeFavorite());
+                                        },
+                                        child: AssetGenImage(data
+                                                ? Assets.icons.png
+                                                    .icFavoriteFill.path
+                                                : Assets
+                                                    .icons.png.icFavorite.path)
+                                            .image(
+                                                width: 24,
+                                                height: 24,
+                                                fit: BoxFit.cover),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                          _bloc.state.recipeDetails.likeCount
+                                              .formatNumber(),
+                                          style: context.typographies.body
+                                              .copyWith(
+                                                  color: context.colors.text,
+                                                  fontSize: 24)),
+                                      const SizedBox(width: 50),
+                                      AssetGenImage(
+                                              Assets.icons.png.icView.path)
+                                          .image(
+                                              width: 24,
+                                              height: 24,
+                                              fit: BoxFit.cover,
+                                              color: context.colors.text),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(recipe.views.formatNumber(),
+                                          style: context.typographies.body
+                                              .copyWith(
+                                                  color: context.colors.text,
+                                                  fontSize: 24)),
+                                    ],
+                                  );
+                                }),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _buildAuthor(recipe),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            _buildDescription(recipe),
+                            _buildIngredients(recipe),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _buildInstructions(recipe),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _buildComments(),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            _buildSuggests(),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              );
-            }
-            return Container();
-          },
+                    )
+                  ],
+                );
+              }
+              return Container();
+            },
+          ),
         ),
       ),
     );
@@ -436,42 +529,81 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
         const SizedBox(
           height: 10,
         ),
-        Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(recipe.author.avatarUrl),
-              backgroundColor: context.colors.hint,
-              radius: 30,
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(recipe.author.displayName,
-                      style: context.typographies.bodyBold),
-                  Text("@${recipe.author.username}",
-                      style: context.typographies.body
-                          .withColor(context.colors.text.withOpacity(0.5))),
-                ],
+        GestureDetector(
+          onTap: (){
+            if(userAccount?.id == recipe.author.id) {
+              context.router.push( ProfileRoute( isFromDashboard: false));
+            }
+            else{
+              context.router.push(UserProfileRoute(userId: recipe.author.id));
+            }
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(recipe.author.avatarUrl),
+                backgroundColor: context.colors.hint,
+                radius: 30,
               ),
-            ),
-            if (userAccount?.id != recipe.author.id)
-              Container(
-                decoration: BoxDecoration(
-                  color: context.colors.secondary,
-                  borderRadius: BorderRadius.circular(20),
+              const SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(recipe.author.displayName,
+                        style: context.typographies.bodyBold),
+                    Text("@${recipe.author.username}",
+                        style: context.typographies.body
+                            .withColor(context.colors.text.withOpacity(0.5))),
+                  ],
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Text("Theo dõi",
-                    style: context.typographies.body
-                        .copyWith(color: Colors.white)),
               ),
-          ],
+              if (userAccount?.id != recipe.author.id)
+                RecipeDetailsSelector(
+                  selector: (state) => state.recipeDetails.author.isFollowing,
+                  builder: (data) {
+                    return InkWell(
+                      onTap: () {
+                        if (userAccount != null) {
+                          _bloc.add(RecipeDetailsChangeFollow(FollowParams(
+                              followedId: recipe.author.id,
+                              status: data
+                                  ? FeatureStatus.disable
+                                  : FeatureStatus.enable)));
+                        } else {
+                          context.router.push(const LoginRoute());
+                        }
+                      },
+                      child: !data
+                          ? Container(
+                              decoration: BoxDecoration(
+                                color: context.colors.secondary,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              child: Text("Theo dõi",
+                                  style: context.typographies.body
+                                      .copyWith(color: Colors.white)),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                color: context.colors.hint.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              child: Text("Đang theo dõi",
+                                  style: context.typographies.bodyBold),
+                            ),
+                    );
+                  }
+                ),
+            ],
+          ),
         ),
         const SizedBox(
           height: 10,
@@ -628,7 +760,8 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
         if (_bloc.state.totalComments > 1) ...[
           InkWell(
             onTap: () {
-              context.router.push(CommentRoute(recipeId: widget.id));
+              context.router.push(
+                  CommentRoute(recipeId: widget.id, isWriteComment: false));
             },
             child: Text(
               "Xem tất cả bình luận",
@@ -672,6 +805,9 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
         Row(
           children: [
             CircleAvatar(
+              backgroundImage: userAccount?.avatarUrl.isNotEmpty == true
+                  ? NetworkImage(userAccount!.avatarUrl)
+                  : null,
               backgroundColor: context.colors.hint,
               radius: 20,
             ),
@@ -679,18 +815,24 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
               width: 10,
             ),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: context.colors.hint.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: context.colors.hint.withOpacity(0.5))),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Text(
-                  "Viết bình luận...",
-                  style:
-                      context.typographies.body.withColor(context.colors.hint),
+              child: InkWell(
+                onTap: () {
+                  context.router.push(
+                      CommentRoute(recipeId: widget.id, isWriteComment: true));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: context.colors.hint.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: context.colors.hint.withOpacity(0.5))),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Text(
+                    "Viết bình luận...",
+                    style: context.typographies.body
+                        .withColor(context.colors.hint),
+                  ),
                 ),
               ),
             )

@@ -4,6 +4,7 @@ import 'package:uq_system_app/core/exceptions/unauthorized_exception.dart';
 import 'package:uq_system_app/di/injector.dart';
 import 'package:uq_system_app/presentation/blocs/auth/auth_bloc.dart';
 import 'package:uq_system_app/presentation/blocs/auth/auth_event.dart';
+import 'package:uq_system_app/presentation/blocs/socket/socket.cubit.dart';
 import 'package:uq_system_app/presentation/blocs/system/system_bloc.dart';
 import 'package:uq_system_app/presentation/blocs/system/system_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,7 @@ class AppBlocObserver extends BlocObserver {
   AuthBloc get _authBloc => getIt.get<AuthBloc>();
 
   SystemBloc get _systemBloc => getIt.get<SystemBloc>();
+
 
   @override
   void onChange(BlocBase bloc, Change change) {
@@ -31,7 +33,7 @@ class AppBlocObserver extends BlocObserver {
     if (error is UnauthorizedException ||
         (actualError is DioException &&
             actualError.response?.statusCode == 401)) {
-      // _authBloc.add(const AuthLoggedOut());
+      _authBloc.add(const AuthSessionExpired());
     }
 
     super.onError(bloc, error, stackTrace);

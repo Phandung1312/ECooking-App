@@ -16,6 +16,7 @@ final AppTheme darkTheme = AppTheme(
     tertiary: Color(0xF6FCD5D1),
     accent: Color(0xFFFFFFFF),
     background: Color(0xFFFFFFFF),
+    secondaryBackground: Color(0xFFF6F1EC),
     backgroundDark: Color(0xFFF1F1F1),
     disabled: Color(0xFFE4E4E4),
     information: Color(0xFF2164FF),
@@ -242,6 +243,20 @@ class AppTheme extends ThemeExtension<AppTheme> {
           backgroundColor: colors.background,
           surfaceTintColor: colors.background,
           titleTextStyle: typographies.title3,
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return Colors.white;
+            }
+            return Colors.white;
+          }),
+          trackColor: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.selected)) {
+              return colors.secondary;
+            }
+            return colors.hint.withOpacity(0.5);
+          }),
         ),
         tabBarTheme: TabBarTheme(
           labelStyle: typographies.body.withColor(colors.secondary),
