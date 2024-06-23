@@ -23,6 +23,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
       {super.searchFieldLabel, super.searchFieldStyle, super.textInputAction});
 
   final SearchBloc _bloc = getIt<SearchBloc>();
+  var tabIndex = 0;
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -79,7 +80,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             );
           }
           return DefaultTabController(
+            key: UniqueKey(),
             length: 4,
+            initialIndex: tabIndex,
             child: Builder(
               builder: (context) {
                 return Column(
@@ -118,7 +121,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                         builder: (context, child){
                           switch (DefaultTabController.of(context).index) {
                             case 0:
-                              return _buildAllTap(context);
+                              return _buildAllTap(context, DefaultTabController.of(context));
                             case 1:
                               return RecipeTab(
                                 bloc: _bloc,
@@ -174,7 +177,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
     );
   }
 
-  Widget _buildAllTap(BuildContext context) {
+  Widget _buildAllTap(BuildContext context, TabController tabController) {
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
       child: SearchSelector(
@@ -183,12 +186,13 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             if (data.instructions.isEmpty &&
                 data.recipes.isEmpty &&
                 data.accounts.isEmpty) {
-              return const Column(
+              return  Column(
                 children: [
                   SizedBox(
                     height: 200,
+                    width: MediaQuery.of(context).size.width,
                   ),
-                  Text('Không tìm thấy kết quả phù hợp'),
+                  const Text('Không tìm thấy kết quả phù hợp'),
                 ],
               );
             } else {
@@ -206,7 +210,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                               style: context.typographies.title3),
                           if (data.recipes.length > 3) ...[
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                tabController.animateTo(1);
+                              },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -255,7 +261,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                               style: context.typographies.title3),
                           if (data.accounts.length > 3) ...[
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                tabController.animateTo(3);
+                              },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -303,7 +311,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                               style: context.typographies.title3),
                           if (data.instructions.length > 3) ...[
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                tabController.animateTo(2);
+                              },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

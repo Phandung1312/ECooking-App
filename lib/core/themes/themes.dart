@@ -360,6 +360,10 @@ class AppTheme extends ThemeExtension<AppTheme> {
           surfaceTintColor: colors.background,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         ),
+        bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: colors.background,
+          surfaceTintColor: colors.background,
+        ),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: colors.background,
           elevation: 1,

@@ -13,6 +13,8 @@ enum CreateRecipeStatus {
   uploadedVideo,
   uploadingImage,
   uploadedImage,
+  deleting,
+  deleted,
   updated,
   success,
   failure,

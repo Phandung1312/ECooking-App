@@ -45,4 +45,6 @@ class CreateRecipeEvent with _$CreateRecipeEvent {
 
   const factory CreateRecipeEvent.create(RecipeStatus status) =
       CreateRecipeCreate;
+
+  const factory CreateRecipeEvent.delete() = CreateRecipeDelete;
 }

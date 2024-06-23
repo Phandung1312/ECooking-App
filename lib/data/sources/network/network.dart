@@ -20,6 +20,7 @@ import 'package:dio/dio.dart';
 
 import '../../../domain/entities/params/follow.params.dart';
 import '../../models/comment/comment.response.dart';
+import '../../models/report/report.request.dart';
 
 part 'network.g.dart';
 
@@ -51,8 +52,9 @@ abstract class NetworkDataSource {
   Future<BaseResponse<RecipeDetailsResponse>> getRecipeDetails(
       @Path('id') int id);
 
-  @GET(NetworkUrls.suggestRecipe)
+  @GET('${NetworkUrls.recipe}/{id}/suggest')
   Future<BaseResponse<List<RecipeModel>>> getSuggestRecipes(
+      @Path('id') int id,
       @Query('title') String title);
 
   @POST(NetworkUrls.recipe)
@@ -70,7 +72,8 @@ abstract class NetworkDataSource {
 
   @PUT(NetworkUrls.savedRecipe)
   Future<BaseResponse> updateSavedRecipe(@Body() RecipeFeatureRequest request);
-
+  @DELETE('${NetworkUrls.recipe}/{id}')
+  Future<BaseResponse> deleteRecipe(@Path('id') int id);
   //Comment
   @GET('${NetworkUrls.recipe}/{id}/comments')
   Future<PaginateResponse<List<CommentResponse>>> getComments(
@@ -148,4 +151,8 @@ abstract class NetworkDataSource {
 
   @PUT('${NetworkUrls.notification}/{id}/read')
   Future<HttpResponse> markAsRead(@Path('id') int id);
+
+
+  @POST(NetworkUrls.report)
+  Future<BaseResponse> createReport(@Body() ReportRequest reportRequest);
 }

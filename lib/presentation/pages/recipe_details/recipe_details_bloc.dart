@@ -5,17 +5,21 @@ import 'package:pair/pair.dart';
 import 'package:uq_system_app/data/models/recipe_feature/recipe_feature.request.dart';
 import 'package:uq_system_app/domain/entities/enum/enum.dart';
 import 'package:uq_system_app/domain/entities/params/paginate_comment_params.dart';
+import 'package:uq_system_app/domain/entities/params/suggest_recipe.params.dart';
 import 'package:uq_system_app/domain/usecase/recipe/get_suggest_recipes.usecase.dart';
 import 'package:uq_system_app/presentation/pages/recipe_details/recipe_details_event.dart';
 import 'package:uq_system_app/presentation/pages/recipe_details/recipe_details_state.dart';
 
 import '../../../core/exceptions/exception.dart';
+import '../../../data/models/report/report.request.dart';
 import '../../../domain/entities/comment.dart';
 import '../../../domain/entities/recipe_details.dart';
 import '../../../domain/usecase/comment/get_comments.usecase.dart';
 import '../../../domain/usecase/recipe/change_recipe_favorite.usecase.dart';
 import '../../../domain/usecase/recipe/change_saved_recipe.usecase.dart';
+import '../../../domain/usecase/recipe/delete_recipe.usecase.dart';
 import '../../../domain/usecase/recipe/get_recipe_details.usecase.dart';
+import '../../../domain/usecase/report/report.usecase.dart';
 import '../../../domain/usecase/user/update_follow.usecase.dart';
 
 @injectable
@@ -26,13 +30,16 @@ class RecipeDetailsBloc extends Bloc<RecipeDetailsEvent, RecipeDetailsState> {
   final ChangeRecipeFavorite _changeRecipeFavorite;
   final ChangeSavedRecipeUseCase _changeSavedRecipeUseCase;
   final UpdateFollowUseCase _updateFollowUseCase;
+  final DeleteRecipeUseCase _deleteRecipeUseCase;
+  final CreateReportUseCase _createReportUseCase;
+
 
   RecipeDetailsBloc(
       this.getRecipeDetailsDetailsUseCase,
       this.getSuggestRecipesUseCase,
       this.getCommentsUseCase,
       this._changeRecipeFavorite,
-      this._changeSavedRecipeUseCase, this._updateFollowUseCase)
+      this._changeSavedRecipeUseCase, this._updateFollowUseCase, this._deleteRecipeUseCase, this._createReportUseCase)
       : super(const RecipeDetailsState()) {
     on<RecipeDetailsErrorOccurred>(_onErrorOccurred);
     on<RecipeDetailsLoad>(_onLoad);
@@ -41,6 +48,20 @@ class RecipeDetailsBloc extends Bloc<RecipeDetailsEvent, RecipeDetailsState> {
     on<RecipeDetailsChangeSaved>(_onChangeSavedRecipe);
     on<RecipeDetailsChangeFavorite>(_onChangeFavorite);
     on<RecipeDetailsChangeFollow>(_onChangeFollow);
+    on<RecipeDetailsDelete>(_onDelete);
+    on<RecipeDetailsReport>(_onReport);
+  }
+  FutureOr<void> _onReport(RecipeDetailsReport event, Emitter<RecipeDetailsState> emit) async {
+    emit(state.copyWith(
+      status: RecipeDetailsStatus.reporting,
+    ));
+    await _createReportUseCase(ReportRequest(
+      content: event.content,
+      recipeId: state.recipeDetails.id,
+    ));
+    emit(state.copyWith(
+      status: RecipeDetailsStatus.reported,
+    ));
   }
   FutureOr<void> _onChangeFollow(
     RecipeDetailsChangeFollow event,
@@ -57,6 +78,15 @@ class RecipeDetailsBloc extends Bloc<RecipeDetailsEvent, RecipeDetailsState> {
         ),
       ),
       status: RecipeDetailsStatus.updated,
+    ));
+  }
+  Future<void> _onDelete(RecipeDetailsDelete event, Emitter<RecipeDetailsState> emit) async {
+    emit(state.copyWith(
+      status: RecipeDetailsStatus.deleting,
+    ));
+    await _deleteRecipeUseCase(state.recipeDetails.id);
+    emit(state.copyWith(
+      status: RecipeDetailsStatus.deleted,
     ));
   }
   FutureOr<void> _onLoad(
@@ -77,7 +107,7 @@ class RecipeDetailsBloc extends Bloc<RecipeDetailsEvent, RecipeDetailsState> {
         totalComments: pair.key,
         status: RecipeDetailsStatus.success,
       ));
-      add(RecipeDetailsLoadSuggests(recipeDetails.title));
+      add(RecipeDetailsLoadSuggests(SuggestRecipeParams(id: recipeDetails.id, title: recipeDetails.title)));
     });
   }
   FutureOr<void> _onChangeFavorite(
@@ -125,7 +155,7 @@ class RecipeDetailsBloc extends Bloc<RecipeDetailsEvent, RecipeDetailsState> {
     emit(state.copyWith(
       status: RecipeDetailsStatus.loadingSuggests,
     ));
-    final suggests = await getSuggestRecipesUseCase(event.title);
+    final suggests = await getSuggestRecipesUseCase(event.params);
     emit(state.copyWith(
       suggests: suggests,
       status: RecipeDetailsStatus.loadedSuggests,

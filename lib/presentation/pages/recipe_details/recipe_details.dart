@@ -5,6 +5,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uq_system_app/assets.gen.dart';
 import 'package:uq_system_app/core/extensions/number.dart';
 import 'package:uq_system_app/core/extensions/text_style.dart';
@@ -47,7 +48,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   late ChewieController _chewieController;
   var isVideoInitialized = false;
   Account? userAccount;
-
   @override
   void initState() {
     super.initState();
@@ -67,7 +67,95 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     }
     super.dispose();
   }
-
+  void showReportDialog(BuildContext context){
+    String? selectedReportContent;
+    List<String> reportContents = ReportContent.values.map((e) => e.content).toList();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateSB) {
+            return AlertDialog(
+              title: Text("Báo cáo công thức", style: context.typographies.title2),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButton<String>(
+                    icon:  Icon(Icons.arrow_drop_down, color: context.colors.primary,),
+                    hint: const Text("Vui lòng chọn nội dung báo cáo"),
+                    isExpanded: true,
+                    value: selectedReportContent,
+                    items: reportContents.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value, style: context.typographies.body,),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setStateSB(() {
+                        selectedReportContent = newValue;
+                      });
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                            backgroundColor: context.colors.hint,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: Text("Hủy", style: context.typographies.bodyBold.withColor(Colors.white)),
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            if(selectedReportContent != null){
+                              _bloc.add(RecipeDetailsReport(selectedReportContent!));
+                              Navigator.of(context).pop();
+                            }
+                            else{
+                              Fluttertoast.showToast(
+                                  msg: 'Vui lòng chọn nội dung báo cáo',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: context.colors.background,
+                                  textColor: context.colors.primary,
+                                  fontSize: 16.0);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                            backgroundColor: context.colors.secondary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: Text("Gửi", style: context.typographies.bodyBold.withColor(Colors.white)),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -101,6 +189,31 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                       ],
                     ),
                   );
+                  return;
+                }
+                if(state.status == RecipeDetailsStatus.deleted){
+                  Fluttertoast.showToast(
+                      msg: 'Đã xóa công thức này',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: context.colors.background,
+                      textColor: context.colors.primary,
+                      fontSize: 16.0);
+                  context.router.pop();
+                  return;
+                }
+                if (state.status == RecipeDetailsStatus.reported) {
+                  Fluttertoast.showToast(
+                      msg: 'Đã báo cáo công thức này, admin sẽ xem xét và xử lý sớm nhất có thể',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: context.colors.background,
+                      textColor: context.colors.primary,
+                      fontSize: 16.0);
+
+                  return;
                 }
               },
             ),
@@ -166,10 +279,31 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                                           }
                                         },
                                       ),
-                                    IconButton(
+                                    PopupMenuButton<int>(
                                       icon: const Icon(Icons.more_vert),
+                                      surfaceTintColor: Colors.white,
                                       color: Colors.white,
-                                      onPressed: () {},
+                                      itemBuilder: (context) => [
+                                        userAccount?.id == recipe.author.id ?
+                                        PopupMenuItem(
+                                          value: 1,
+                                          child: Text("Xóa", style : context.typographies.caption1),
+                                        ) :
+                                        PopupMenuItem(
+                                          value: 2,
+                                          child: Text("Báo cáo", style : context.typographies.caption1),
+                                        ),
+                                      ],
+                                      onSelected: (value) {
+                                        switch (value) {
+                                          case 1:
+                                            _bloc.add(const RecipeDetailsDelete());
+                                            break;
+                                          case 2:
+                                            showReportDialog(context);
+                                            break;
+                                        }
+                                      },
                                     ),
                                   ],
                                   backgroundColor: Colors.red,
@@ -284,13 +418,37 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                             AnimatedBuilder(
                               animation: _scrollController,
                               builder: (context, child) {
-                                return IconButton(
+
+
+                                return PopupMenuButton<int>(
                                   icon: const Icon(Icons.more_vert),
-                                  color: _scrollController.hasClients &&
-                                          _scrollController.offset > 200
-                                      ? Colors.black
-                                      : Colors.white,
-                                  onPressed: () {},
+                                  surfaceTintColor: Colors.white,
+                                  color: Colors.white,
+                                  iconColor: _scrollController.hasClients &&
+                                _scrollController.offset > 200
+                                ? Colors.black
+                                    : Colors.white,
+                                  itemBuilder: (context) => [
+                                    userAccount?.id == recipe.author.id ?
+                                    PopupMenuItem(
+                                      value: 1,
+                                      child: Text("Xóa", style : context.typographies.caption1),
+                                    ) :
+                                    PopupMenuItem(
+                                      value: 2,
+                                      child: Text("Báo cáo", style : context.typographies.caption1),
+                                    ),
+                                  ],
+                                  onSelected: (value) {
+                                    switch (value) {
+                                      case 1:
+                                        _bloc.add(const RecipeDetailsDelete());
+                                        break;
+                                      case 2:
+                                        showReportDialog(context);
+                                        break;
+                                    }
+                                  },
                                 );
                               },
                             ),
@@ -846,7 +1004,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Món ăn tương tự", style: context.typographies.title2),
+        Text("Có thể bạn quan tâm", style: context.typographies.title2),
         const SizedBox(
           height: 20,
         ),

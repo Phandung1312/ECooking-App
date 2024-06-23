@@ -4,6 +4,7 @@ import 'package:uq_system_app/data/models/recipe_details/recipe_details.request.
 import 'package:uq_system_app/data/models/recipe_feature/recipe_feature.request.dart';
 import 'package:uq_system_app/domain/entities/params/common_paginate.params.dart';
 import 'package:uq_system_app/domain/entities/params/paginate_recipe.params.dart';
+import 'package:uq_system_app/domain/entities/params/suggest_recipe.params.dart';
 import 'package:uq_system_app/domain/entities/recipe.dart';
 import 'package:uq_system_app/domain/entities/recipe_details.dart';
 import 'package:uq_system_app/domain/repositories/recipe.repository.dart';
@@ -39,8 +40,8 @@ class RecipeRepositoryImpl extends RecipeRepository {
   }
 
   @override
-  Future<List<Recipe>> getSuggestRecipes(String title) async{
-    var result = await _networkDataSource.getSuggestRecipes(title);
+  Future<List<Recipe>> getSuggestRecipes(SuggestRecipeParams suggestRecipeParams) async{
+    var result = await _networkDataSource.getSuggestRecipes(suggestRecipeParams.id, suggestRecipeParams.title);
     return result.data.map((e) => e.mapToEntity()).toList();
   }
 
@@ -76,6 +77,11 @@ class RecipeRepositoryImpl extends RecipeRepository {
   Future<List<Recipe>> getDraftRecipes(CommonPaginateParams params) async{
     var result  = await _networkDataSource.getDraftRecipes(params.page, params.perPage);
     return result.data.map((e) => e.mapToEntity()).toList();
+  }
+
+  @override
+  Future<void> deleteRecipe(int id) async{
+    await _networkDataSource.deleteRecipe(id);
   }
 
 }

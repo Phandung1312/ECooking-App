@@ -11,6 +11,7 @@ class NetworkUrls {
   static const String suggestSearch = '$search/suggest';
   static const String suggestRecipe= '$recipe/suggest';
   static const String user = '/users';
+  static const String report = '/reports';
   static const String topMember = '$user/top-members';
   static const String upload = '/upload';
   static const String uploadImage = '$upload/image';

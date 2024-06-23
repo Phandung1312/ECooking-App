@@ -12,6 +12,8 @@ import 'package:uq_system_app/presentation/pages/dashboard/notification/notifica
 import 'package:uq_system_app/presentation/pages/dashboard/notification/notification_selector.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/notification/widgets/notification.item.dart';
 
+import '../../../blocs/auth/auth_bloc.dart';
+import '../../../blocs/auth/auth_state.dart';
 import 'notification_bloc.dart';
 
 @RoutePage()
@@ -49,6 +51,13 @@ class _NotificationPageState extends State<NotificationPage> {
               }
             },
           ),
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
+            current.status == AuthStatus.success,
+            listener: (context, state) {
+              _bloc.add(const NotificationLoad(isLoadMore: false));
+            },
+          )
         ],
         child: Scaffold(
           appBar: AppBar(

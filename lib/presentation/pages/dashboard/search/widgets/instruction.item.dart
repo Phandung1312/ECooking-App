@@ -26,7 +26,7 @@ class InstructionItem extends StatelessWidget{
           color: context.colors.background,
           borderRadius: BorderRadius.circular(10),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+        padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

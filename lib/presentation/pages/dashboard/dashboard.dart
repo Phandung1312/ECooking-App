@@ -94,7 +94,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 if (mounted) {
                   _showSessionExpiredDialog(context);
                 }
-              } else if (state.status == AuthStatus.success) {
+              }
+              else if (state.status == AuthStatus.success) {
                 var userInfoHelper = getIt.get<UserInfoHelper>();
                 var account = await userInfoHelper.getAccountUser();
                 _bloc.add(const DashboardLoadUnreadNotifications());

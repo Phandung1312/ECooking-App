@@ -19,6 +19,10 @@ enum RecipeDetailsStatus {
   loadedSuggests,
   updating,
   updated,
+  deleting,
+  deleted,
+  reporting,
+  reported,
   success,
   failure,
 }

@@ -69,4 +69,7 @@ class LocalDataSource {
     }
     return null;
   }
+  Future<void> removeAccount() async {
+    await _prefStorage.remove(_accountKey);
+  }
 }

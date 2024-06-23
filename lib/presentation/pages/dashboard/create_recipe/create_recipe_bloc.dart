@@ -12,6 +12,7 @@ import 'package:uq_system_app/domain/usecase/recipe/update_recipe.usecase.dart';
 
 import '../../../../domain/entities/enum/enum.dart';
 import '../../../../domain/usecase/recipe/create_recipe.usecase.dart';
+import '../../../../domain/usecase/recipe/delete_recipe.usecase.dart';
 import 'create_recipe_event.dart';
 import 'create_recipe_state.dart';
 
@@ -22,13 +23,15 @@ class CreateRecipeBloc extends Bloc<CreateRecipeEvent, CreateRecipeState> {
   GetRecipeDetailsDetailsUseCase getRecipeDetailsDetailsUseCase;
   UploadVideoUseCase uploadVideoUseCase;
   UploadImageUseCase uploadImageUseCase;
+   DeleteRecipeUseCase _deleteRecipeUseCase;
 
   CreateRecipeBloc(
       this.createRecipeUseCase,
       this.updateRecipeUseCase,
       this.getRecipeDetailsDetailsUseCase,
       this.uploadVideoUseCase,
-      this.uploadImageUseCase)
+      this.uploadImageUseCase,
+      this._deleteRecipeUseCase)
       : super(const CreateRecipeState()) {
     on<CreateRecipeErrorOccurred>(_onErrorOccurred);
     on<CreateRecipeLoad>(_onLoad);
@@ -42,6 +45,7 @@ class CreateRecipeBloc extends Bloc<CreateRecipeEvent, CreateRecipeState> {
     on<CreateRecipeCreate>(_onCreate);
     on<CreateRecipeUploadImage>(_onUploadImage);
     on<CreateRecipeUploadVideo>(_onUploadVideo);
+    on<CreateRecipeDelete>(_onDelete);
   }
 
   FutureOr<void> _onLoad(
@@ -55,11 +59,11 @@ class CreateRecipeBloc extends Bloc<CreateRecipeEvent, CreateRecipeState> {
     var recipeDetails = RecipeDetailsRequest(
       id: result.id,
       title: result.title,
-      content: result.content,
+      content: result.content.isEmpty ? null : result.content,
       image: result.imageUrl.isEmpty ? null : result.imageUrl,
       video: result.videoUrl.isEmpty ? null : result.videoUrl,
-      cookTime: result.cookTime,
-      servers: result.servers,
+      cookTime: result.cookTime.isEmpty ? null : result.cookTime,
+      servers: result.servers.isEmpty ? null : result.servers,
       ingredients: result.ingredients.map((e) => e.content).toList(),
       instructions: result.instructions
           .map((e) => InstructionRequest(
@@ -140,6 +144,11 @@ class CreateRecipeBloc extends Bloc<CreateRecipeEvent, CreateRecipeState> {
     Emitter<CreateRecipeState> emit,
   ) async {
     EasyLoading.show();
+    emit(state.copyWith(
+      recipeDetailsRequest: state.recipeDetailsRequest.copyWith(
+        status: event.status,
+      ),
+    ));
     var result = state.recipeDetailsRequest.id != null &&
             state.recipeDetailsRequest.id! > 0
         ? await updateRecipeUseCase(state.recipeDetailsRequest)
@@ -260,6 +269,21 @@ class CreateRecipeBloc extends Bloc<CreateRecipeEvent, CreateRecipeState> {
       recipeDetailsRequest: newRecipe,
       status: CreateRecipeStatus.updated,
       isDataValid: _validateData(newRecipe),
+    ));
+  }
+
+  FutureOr<void> _onDelete(
+    CreateRecipeDelete event,
+    Emitter<CreateRecipeState> emit,
+  ) async {
+    emit(state.copyWith(
+      status: CreateRecipeStatus.deleting,
+    ));
+    EasyLoading.show();
+    await _deleteRecipeUseCase(state.recipeDetailsRequest.id!);
+    EasyLoading.dismiss();
+    emit(state.copyWith(
+      status: CreateRecipeStatus.deleted,
     ));
   }
 

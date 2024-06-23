@@ -10,12 +10,16 @@ import '../../../navigation/navigation.dart';
 
 class DraftRecipeItem extends StatelessWidget {
   final Recipe recipe;
-  const DraftRecipeItem({Key? key, required this.recipe}) : super(key: key);
+  final void Function(bool isUpdated) onTap;
+  const DraftRecipeItem({Key? key, required this.recipe, required this.onTap}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        context.router.push(CreateRecipeRoute(recipeId: recipe.id));
+      onTap: () async{
+        var result = await context.router.push(CreateRecipeRoute(recipeId: recipe.id));
+        if(result != null) {
+          onTap(true);
+        }
       },
       child: Container(
         decoration: BoxDecoration(

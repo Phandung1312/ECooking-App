@@ -75,6 +75,7 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
           CreateRecipeStatusListener(
             statuses: const [
               CreateRecipeStatus.success,
+              CreateRecipeStatus.deleted,
               CreateRecipeStatus.failure
             ],
             listener: (context, state) {
@@ -84,8 +85,8 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                         ? 'Lưu thành công'
                         : _bloc.state.recipeDetailsRequest.status ==
                                 RecipeStatus.draft
-                            ? 'Đăng tải thành công'
-                            : 'Cập nhật thành công',
+                            ? 'Cập nhật thành công'
+                            : 'Đăng tải thành công',
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.BOTTOM,
                     timeInSecForIosWeb: 1,
@@ -101,6 +102,17 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                   ));
                 }
                 return;
+              }
+              if(state.status == CreateRecipeStatus.deleted){
+                Fluttertoast.showToast(
+                    msg: 'Đã xóa công thức',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: context.colors.background,
+                    textColor: context.colors.primary,
+                    fontSize: 16.0);
+                context.router.pop(true);
               }
               if (state.status == CreateRecipeStatus.failure) {
                 Fluttertoast.showToast(
@@ -213,14 +225,35 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
                     const SizedBox(
                       width: 15,
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: context.colors.primary,
-                        size: 30,
-                      ),
-                      onPressed: () {},
-                    ),
+                    PopupMenuButton<int>(
+                      icon:  Icon(Icons.more_vert, color: context.colors.primary,),
+                      surfaceTintColor: Colors.white,
+                      color: Colors.white,
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 1,
+                          child: Text("Xóa công thức này", style : context.typographies.caption1),
+                        )
+                      ],
+                      onSelected: (value) {
+                         if (value == 1) {
+                            showAlertDialog(
+                                context: context,
+                                messages: [
+                                  'Bạn có chắc chắn muốn xóa công thức này không?'
+                                ],
+                                onTap: () {
+                                  if(widget.recipeId != null){
+                                    _bloc.add(const CreateRecipeEvent.delete());
+                                  }
+                                  else{
+                                    Navigator.pop(context);
+                                    context.router.pop();
+                                  }
+                                });
+                          }
+                      },
+                    )
                   ],
                 ),
                 SliverToBoxAdapter(
@@ -321,9 +354,11 @@ class _CreateRecipePageState extends State<CreateRecipePage> {
             selector: (state) => state.recipeDetailsRequest.video,
             builder: (data) {
               if (data == null) {
-                return CreateRecipeStatusSelector(
-                  builder: (status) {
-                    if (status == CreateRecipeStatus.uploadingVideo) {
+                return BlocBuilder<CreateRecipeBloc, CreateRecipeState>(
+                  buildWhen: (previous, current) =>
+                      current.status == CreateRecipeStatus.uploadingVideo || current.status == CreateRecipeStatus.uploadedVideo,
+                  builder: (context, state) {
+                    if (state.status == CreateRecipeStatus.uploadingVideo) {
                       return Column(
                         children: [
                           Center(

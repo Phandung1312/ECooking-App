@@ -43,7 +43,7 @@ class ViewMoreRecipesBloc
     }
     emit(state.copyWith(
       recipes: event.isLoadMore ? [...state.recipes, ...recipes] : recipes,
-      recipesPage: state.recipesPage + 1,
+      recipesPage: recipes.isNotEmpty ? state.recipesPage + 1 : state.recipesPage,
       status: ViewMoreRecipesStatus.success,
     ));
   }

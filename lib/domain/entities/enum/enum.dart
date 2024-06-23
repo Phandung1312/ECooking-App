@@ -50,3 +50,13 @@ enum FollowType{
   following,
   follower
 }
+
+enum ReportContent{
+  one("Nội dung không phù hợp"),
+  two("Hình ảnh không lành mạnh"),
+  three("Vi phạm bản quyền"),
+  four("Lừa đảo"),
+  five("Khác");
+  final String content;
+   const ReportContent(this.content);
+}

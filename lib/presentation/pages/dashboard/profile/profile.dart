@@ -18,6 +18,8 @@ import 'package:uq_system_app/presentation/pages/dashboard/profile/profile_selec
 import 'package:uq_system_app/presentation/pages/dashboard/profile/widgets/saved_recipe.tab.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/profile/widgets/user_recipe.tab.dart';
 
+import '../../../blocs/auth/auth_bloc.dart';
+import '../../../blocs/auth/auth_state.dart';
 import '../../../widgets/divider_line.dart';
 
 @RoutePage()
@@ -56,80 +58,93 @@ class _ProfilePageState extends State<ProfilePage>
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _bloc,
-      child: ProfileSelector(
-        selector: (state) => state.profile,
-        builder: (data) => Scaffold(
-          appBar: AppBar(
-            leading: !widget.isFromDashboard
-                ? IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: context.colors.primary,
-                    ),
-                    onPressed: () {
-                      context.router.pop();
-                    },
-                  )
-                : null,
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.settings_outlined,
-                  color: context.colors.primary,
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
+            current.status == AuthStatus.success,
+            listener: (context, state) async{
+              _account = await getIt.get<UserInfoHelper>().getAccountUser();
+              _bloc.add(ProfileEvent.updateUserId(userId: _account!.id));
+              _bloc.add(const ProfileLoadProfile());
+            },
+          )
+        ],
+        child: ProfileSelector(
+          selector: (state) => state.profile,
+          builder: (data) => Scaffold(
+            appBar: AppBar(
+              leading: !widget.isFromDashboard
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: context.colors.primary,
+                      ),
+                      onPressed: () {
+                        context.router.pop();
+                      },
+                    )
+                  : null,
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.settings_outlined,
+                    color: context.colors.primary,
+                  ),
+                  onPressed: () {
+                    context.router.push(const SettingsRoute());
+                  },
                 ),
-                onPressed: () {
-                  context.router.push(const SettingsRoute());
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.more_vert_outlined,
-                  color: context.colors.primary,
+                IconButton(
+                  icon: Icon(
+                    Icons.more_vert_outlined,
+                    color: context.colors.primary,
+                  ),
+                  onPressed: () {},
                 ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-          body: Column(
-            children: [
-              _buildProfile(data),
-              _buildStatistical(data),
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TabBar(
-                  controller: _tabController,
-                  labelColor: context.colors.secondary,
-                  unselectedLabelColor: context.colors.hint,
-                  labelStyle: context.typographies.bodyBold,
-                  unselectedLabelStyle: context.typographies.bodyBold,
-                  dividerColor: context.colors.hint.withOpacity(0.5),
-                  indicatorColor: context.colors.secondary,
-                  tabs: const [
-                    Tab(
-                      text: "Món đã lưu",
-                    ),
-                    Tab(
-                      text: "Món của tôi",
-                    ),
-                  ],
+              ],
+            ),
+            body: Column(
+              children: [
+                _buildProfile(data),
+                _buildStatistical(data),
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-              Expanded(
-                  child: AnimatedBuilder(
-                animation: _tabController,
-                builder: (BuildContext context, Widget? child) {
-                  if (_tabController.index == 0) {
-                    return SavedRecipeTab(bloc: _bloc,);
-                  }
-                  else{
-                    return UserRecipeTab(bloc: _bloc);
-                  }
-                },
-              )),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: context.colors.secondary,
+                    unselectedLabelColor: context.colors.hint,
+                    labelStyle: context.typographies.bodyBold,
+                    unselectedLabelStyle: context.typographies.bodyBold,
+                    dividerColor: context.colors.hint.withOpacity(0.5),
+                    indicatorColor: context.colors.secondary,
+                    tabs: const [
+                      Tab(
+                        text: "Món đã lưu",
+                      ),
+                      Tab(
+                        text: "Món của tôi",
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: AnimatedBuilder(
+                  animation: _tabController,
+                  builder: (BuildContext context, Widget? child) {
+                    if (_tabController.index == 0) {
+                      return SavedRecipeTab(bloc: _bloc,);
+                    }
+                    else{
+                      return UserRecipeTab(bloc: _bloc);
+                    }
+                  },
+                )),
+              ],
+            ),
           ),
         ),
       ),

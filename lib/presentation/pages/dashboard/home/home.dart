@@ -19,6 +19,8 @@ import 'package:uq_system_app/presentation/widgets/divider_line.dart';
 import 'package:uq_system_app/presentation/widgets/recipe_skeleton.dart';
 
 import '../../../../assets.gen.dart';
+import '../../../blocs/auth/auth_bloc.dart';
+import '../../../blocs/auth/auth_state.dart';
 import 'home_bloc.dart';
 
 @RoutePage()
@@ -62,42 +64,53 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _bloc,
-      child: Scaffold(
-        body: Column(
-          children: [
-            _buildSearch(),
-            const DividerLine(),
-            Expanded(
-              child: SmartRefresher(
-                controller: _bloc.refreshController,
-                physics: const ClampingScrollPhysics(),
-                onLoading: _onLoading,
-                onRefresh: _onRefresh,
-                enablePullDown: true,
-                enablePullUp: true,
-                child: SingleChildScrollView(
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previous, current) =>
+            current.status == AuthStatus.success,
+            listener: (context, state) {
+              _onRefresh();
+            },
+          )
+        ],
+        child: Scaffold(
+          body: Column(
+            children: [
+              _buildSearch(),
+              const DividerLine(),
+              Expanded(
+                child: SmartRefresher(
+                  controller: _bloc.refreshController,
                   physics: const ClampingScrollPhysics(),
-                  child: Column(children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _buildPopularRecipes(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _buildTopMember(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _buildNewestRecipes(),
-                    const SizedBox(
-                      height: 20,
-                    )
-                  ]),
+                  onLoading: _onLoading,
+                  onRefresh: _onRefresh,
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
+                    child: Column(children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildPopularRecipes(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildTopMember(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _buildNewestRecipes(),
+                      const SizedBox(
+                        height: 20,
+                      )
+                    ]),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
