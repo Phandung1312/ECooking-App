@@ -6,7 +6,7 @@ This project is ECooking App.
 Make sure you have the following tools installed:
 - Clone `.env.example` file with 3 env (`.env` for dev, `.env-stg` for staging, `.env-prod` for production)
 - Add file keystore to `{project}/android` path with 3 env (`dev.keystore` for dev, `staging.keystore` for staging, `production.keystore` for production)
-- Clone `android/key.properties.example` and rename to `key.properties` (Please contact email `anhxtanh1411998@gmail.com` or admin to get information in this file.)
+- Clone `android/key.properties.example` and rename to `key.properties` (Please contact email `phandung13122002@gmail.com` or admin to get information in this file.)
 - Run `flutter pub get` to install the dependencies
 - Run `dart run build_runner build --delete-conflicting-outputs --verbose` in auto generator
 
