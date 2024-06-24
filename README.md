@@ -1,10 +1,6 @@
-# Base source flutter
-
-Base source flutter
-
 ## Getting Started
 
-This project is Base source flutter.
+This project is ECooking App.
 
 ### Prerequisites
 Make sure you have the following tools installed:
