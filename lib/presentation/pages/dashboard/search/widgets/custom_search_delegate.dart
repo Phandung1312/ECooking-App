@@ -14,14 +14,19 @@ import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/accoun
 import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/instruction.item.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/instruction.tab.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/recipe.tab.dart';
+import 'package:uq_system_app/presentation/pages/follow/widgets/member.item.dart';
 
 import '../search_event.dart';
 import '../search_state.dart';
 
 class CustomSearchDelegate extends SearchDelegate<String> {
   CustomSearchDelegate(
-      {super.searchFieldLabel, super.searchFieldStyle, super.textInputAction});
+      {super.searchFieldLabel,
+      super.searchFieldStyle,
+      super.textInputAction,
+      required this.accountId});
 
+  final int? accountId;
   final SearchBloc _bloc = getIt<SearchBloc>();
   var tabIndex = 0;
 
@@ -83,67 +88,67 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             key: UniqueKey(),
             length: 4,
             initialIndex: tabIndex,
-            child: Builder(
-              builder: (context) {
-                return Column(
-                  children: [
-                    TabBar(
-                        overlayColor: MaterialStateProperty.all(Colors.transparent),
-                        indicator: UnderlineTabIndicator(
-                            borderSide: BorderSide(
-                                color: context.colors.primary, width: 2)),
-                        indicatorSize: TabBarIndicatorSize.label,
-                        labelColor: context.colors.primary,
-                        indicatorWeight: 2,
-                        labelStyle: context.typographies.caption1Bold,
-                        unselectedLabelStyle: context.typographies.caption1,
-                        dividerColor: context.colors.hint.withOpacity(0.5),
-                        tabs: const [
-                          Tab(
-                            text: 'Tất cả',
-                          ),
-                          Tab(
-                            text: 'Công thức',
-                          ),
-                          Tab(
-                            text: 'Công đoạn',
-                          ),
-                          Tab(
-                            text: 'Người dùng',
-                          ),
-                        ]),
-                    Expanded(
-                        child: Container(
-                      color: const Color(0xFFF6F1EC).withOpacity(0.5),
-                      child: AnimatedBuilder(
-
-                        animation: DefaultTabController.of(context),
-                        builder: (context, child){
-                          switch (DefaultTabController.of(context).index) {
-                            case 0:
-                              return _buildAllTap(context, DefaultTabController.of(context));
-                            case 1:
-                              return RecipeTab(
-                                bloc: _bloc,
-                              );
-                            case 2:
-                              return InstructionTab(
-                                bloc: _bloc,
-                              );
-                            case 3:
-                              return AccountTab(
-                                bloc: _bloc,
-                              );
-                            default:
-                              return Container();
-                          }
-                        },
-                      ),
-                    ))
-                  ],
-                );
-              }
-            ),
+            child: Builder(builder: (context) {
+              return Column(
+                children: [
+                  TabBar(
+                      overlayColor:
+                          MaterialStateProperty.all(Colors.transparent),
+                      indicator: UnderlineTabIndicator(
+                          borderSide: BorderSide(
+                              color: context.colors.primary, width: 2)),
+                      indicatorSize: TabBarIndicatorSize.label,
+                      labelColor: context.colors.primary,
+                      indicatorWeight: 2,
+                      labelStyle: context.typographies.caption1Bold,
+                      unselectedLabelStyle: context.typographies.caption1,
+                      dividerColor: context.colors.hint.withOpacity(0.5),
+                      tabs: const [
+                        Tab(
+                          text: 'Tất cả',
+                        ),
+                        Tab(
+                          text: 'Công thức',
+                        ),
+                        Tab(
+                          text: 'Công đoạn',
+                        ),
+                        Tab(
+                          text: 'Người dùng',
+                        ),
+                      ]),
+                  Expanded(
+                      child: Container(
+                    color: const Color(0xFFF6F1EC).withOpacity(0.5),
+                    child: AnimatedBuilder(
+                      animation: DefaultTabController.of(context),
+                      builder: (context, child) {
+                        switch (DefaultTabController.of(context).index) {
+                          case 0:
+                            return _buildAllTap(
+                                context, DefaultTabController.of(context));
+                          case 1:
+                            return RecipeTab(
+                              bloc: _bloc,
+                            );
+                          case 2:
+                            return InstructionTab(
+                              bloc: _bloc,
+                            );
+                          case 3:
+                            return AccountTab(
+                              bloc: _bloc,
+                              accountId: accountId,
+                            );
+                          default:
+                            return Container();
+                        }
+                      },
+                    ),
+                  ))
+                ],
+              );
+            }),
           );
         },
       ),
@@ -185,8 +190,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           builder: (data) {
             if (data.instructions.isEmpty &&
                 data.recipes.isEmpty &&
-                data.accounts.isEmpty) {
-              return  Column(
+                data.members.isEmpty) {
+              return Column(
                 children: [
                   SizedBox(
                     height: 200,
@@ -250,7 +255,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                         },
                       )
                     ],
-                    if (data.accounts.isNotEmpty) ...[
+                    if (data.members.isNotEmpty) ...[
                       const SizedBox(
                         height: 20,
                       ),
@@ -259,7 +264,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                         children: [
                           Text('Người dùng',
                               style: context.typographies.title3),
-                          if (data.accounts.length > 3) ...[
+                          if (data.members.length > 3) ...[
                             InkWell(
                               onTap: () {
                                 tabController.animateTo(3);
@@ -290,10 +295,13 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount:
-                            data.accounts.length > 3 ? 3 : data.accounts.length,
+                            data.members.length > 3 ? 3 : data.members.length,
                         itemBuilder: (context, index) {
-                          final account = data.accounts[index];
-                          return AccountItem(account: account);
+                          return MemberItem(
+                            member: data.members[index],
+                            onFollow: (bool isFollow) {},
+                            isMe: accountId == data.members[index].id,
+                          );
                         },
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(height: 10);

@@ -297,13 +297,16 @@ extension GetItInjectableX on _i1.GetIt {
           gh<_i40.GetMemberUseCase>(),
           gh<_i49.GetUserRecipesUseCase>(),
           gh<_i60.UpdateFollowUseCase>(),
+          gh<_i25.ChangeSavedRecipeUseCase>(),
         ));
     gh.factory<_i66.ViewMoreMembersBloc>(() => _i66.ViewMoreMembersBloc(
           gh<_i48.GetTopMembersUseCase>(),
           gh<_i60.UpdateFollowUseCase>(),
         ));
-    gh.factory<_i67.ViewMoreRecipesBloc>(
-        () => _i67.ViewMoreRecipesBloc(gh<_i44.GetRecipesUseCase>()));
+    gh.factory<_i67.ViewMoreRecipesBloc>(() => _i67.ViewMoreRecipesBloc(
+          gh<_i44.GetRecipesUseCase>(),
+          gh<_i25.ChangeSavedRecipeUseCase>(),
+        ));
     gh.lazySingleton<_i68.AuthRepository>(() => _i69.AuthRepositoryImpl(
           gh<_i5.NetworkDataSource>(),
           gh<_i51.LocalDataSource>(),

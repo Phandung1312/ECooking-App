@@ -42,27 +42,27 @@ class MemberItem extends StatelessWidget {
               radius: 30,
             ),
             const SizedBox(
-              width: 20,
+              width: 15,
             ),
             Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(member.displayName, style: context.typographies.bodyBold),
+                  Text(member.displayName, style: context.typographies.caption1Bold),
                   Text("@${member.username}",
-                      style: context.typographies.body
+                      style: context.typographies.caption1
                           .withColor(context.colors.text.withOpacity(0.5))),
                   Row(
                     children: [
                       Text("${member.followingCount.formatNumber()} follower",
-                          style: context.typographies.body
+                          style: context.typographies.caption1
                               .withColor(context.colors.text.withOpacity(0.5))),
                       const SizedBox(
                         width: 10,
                       ),
                       Text("${member.recipeCount.formatNumber()} công thức",
-                          style: context.typographies.body
+                          style: context.typographies.caption1
                               .withColor(context.colors.text.withOpacity(0.5))),
                     ],
                   )
@@ -81,8 +81,8 @@ class MemberItem extends StatelessWidget {
                       color: context.colors.hint.withOpacity(0.5)),
                   padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Text("Đang theo dõi",
-                      style: context.typographies.caption1Bold
+                  child: Text("Đang Follow",
+                      style: context.typographies.caption2Bold
                           .withColor(context.colors.primary)),
                 ),
               )
@@ -98,8 +98,8 @@ class MemberItem extends StatelessWidget {
                   ),
                   padding:
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Text("Theo dõi",
-                      style: context.typographies.caption1Bold
+                  child: Text("Follow",
+                      style: context.typographies.caption2Bold
                           .copyWith(color: Colors.white)),
                 ),
               ),

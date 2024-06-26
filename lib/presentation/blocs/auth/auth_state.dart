@@ -8,6 +8,7 @@ enum AuthStatus {
   loading,
   sessionExpired,
   loggedOut,
+  blocked,
   success,
   failure,
 }

@@ -8,6 +8,7 @@ import 'package:uq_system_app/presentation/pages/view_more_recipes/view_more_rec
 import '../../../core/exceptions/exception.dart';
 import '../../../domain/entities/enum/enum.dart';
 import '../../../domain/entities/params/paginate_recipe.params.dart';
+import '../../../domain/usecase/recipe/change_saved_recipe.usecase.dart';
 import '../../../domain/usecase/recipe/get_recipes.usecase.dart';
 
 @injectable
@@ -16,11 +17,13 @@ class ViewMoreRecipesBloc
   final RefreshController refreshController =
       RefreshController(initialRefresh: true);
   final GetRecipesUseCase _getRecipesUseCase;
+  final ChangeSavedRecipeUseCase _changeSavedRecipeUseCase;
 
-  ViewMoreRecipesBloc(this._getRecipesUseCase)
+  ViewMoreRecipesBloc(this._getRecipesUseCase, this._changeSavedRecipeUseCase)
       : super(const ViewMoreRecipesState()) {
     on<ViewMoreRecipesErrorOccurred>(_onErrorOccurred);
     on<ViewMoreRecipesLoad>(_onLoad);
+    on<ViewMoreRecipesChangeSavedRecipe>(_onChangeSavedRecipe);
   }
 
   FutureOr<void> _onLoad(
@@ -43,9 +46,24 @@ class ViewMoreRecipesBloc
     }
     emit(state.copyWith(
       recipes: event.isLoadMore ? [...state.recipes, ...recipes] : recipes,
-      recipesPage: recipes.isNotEmpty ? state.recipesPage + 1 : state.recipesPage,
+      recipesPage:
+          recipes.isNotEmpty ? state.recipesPage + 1 : state.recipesPage,
       status: ViewMoreRecipesStatus.success,
     ));
+  }
+
+  FutureOr<void> _onChangeSavedRecipe(
+    ViewMoreRecipesChangeSavedRecipe event,
+    Emitter<ViewMoreRecipesState> emit,
+  ) async {
+    var result = await _changeSavedRecipeUseCase(event.request);
+    var recipes = state.recipes.map((e) {
+      if (e.id == event.request.recipeId) {
+        return e.copyWith(isSaved: !e.isSaved);
+      }
+      return e;
+    }).toList();
+    emit(state.copyWith(recipes: recipes, status: ViewMoreRecipesStatus.success));
   }
 
   @override

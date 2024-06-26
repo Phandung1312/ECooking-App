@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/account.item.dart';
+import 'package:uq_system_app/presentation/pages/follow/widgets/member.item.dart';
 
-import '../../../../../di/injector.dart';
 import '../../../../../domain/entities/enum/enum.dart';
 import '../../../../../domain/entities/params/search.params.dart';
 import '../search_bloc.dart';
@@ -12,8 +12,9 @@ import '../search_selector.dart';
 
 class AccountTab extends StatefulWidget {
   final SearchBloc bloc;
+  final int? accountId;
   const AccountTab({
-    Key? key, required this.bloc,
+    Key? key, required this.bloc, this.accountId,
   }) : super(key: key);
 
   @override
@@ -51,7 +52,7 @@ class _AccountTabState extends State<AccountTab> {
         enablePullUp: true,
         controller: widget.bloc.accountController,
         child: SearchSelector(
-          selector: (state) => state.searchResult.accounts,
+          selector: (state) => state.searchResult.members,
           builder: (data) {
             if(data.isEmpty){
               return const Column(
@@ -63,17 +64,20 @@ class _AccountTabState extends State<AccountTab> {
                 ],
               );
             }else {
-              return ListView.separated(
-                itemCount: data.length,
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, index) =>
-                    AccountItem(
-                      account: data[index],
-                    ),
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 10);
-                },
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: ListView.separated(
+                  itemCount: data.length,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (context, index) =>
+                     MemberItem(member: data[index], onFollow: (isFollow) {
+
+                     }, isMe: widget.accountId == data[index].id,),
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(height: 10);
+                  },
+                ),
               );
             }
           },

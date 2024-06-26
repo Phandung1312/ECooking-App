@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uq_system_app/core/exceptions/exception.dart';
@@ -77,6 +78,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
   @override
   void onError(Object error, StackTrace stackTrace) {
+    if(EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
     add(NotificationErrorOccurred(BaseException.from(error)));
     super.onError(error, stackTrace);
   }

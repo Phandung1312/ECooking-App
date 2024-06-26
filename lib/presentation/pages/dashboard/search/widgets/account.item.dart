@@ -51,11 +51,11 @@ class AccountItem extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 color: context.colors.secondary,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(10),
               ),
               padding:
-              const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: Text("Theo dõi",
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Text("Follow",
                   style: context.typographies.body
                       .copyWith(color: Colors.white)),
             ),

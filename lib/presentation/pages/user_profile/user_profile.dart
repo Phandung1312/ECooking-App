@@ -205,7 +205,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                                 ),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 10),
-                                child: Text("Theo dõi",
+                                child: Text("Follow",
                                     style: context.typographies.body
                                         .copyWith(color: Colors.white)),
                               )
@@ -216,7 +216,7 @@ class _UserProfilePageState extends State<UserProfilePage>
                                 ),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 10),
-                                child: Text("Đang theo dõi",
+                                child: Text("Đang Follow",
                                     style: context.typographies.bodyBold),
                               ))
                 ],

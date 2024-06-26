@@ -66,9 +66,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(state.copyWith(
           searchResult: state.searchResult.copyWith(
             recipes: [...state.searchResult.recipes, ...searchResult.recipes],
-            accounts: [
-              ...state.searchResult.accounts,
-              ...searchResult.accounts
+            members: [
+              ...state.searchResult.members,
+              ...searchResult.members
             ],
             instructions: [
               ...state.searchResult.instructions,
@@ -76,13 +76,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             ],
           ),
           currentRecipePage: event.params.type == SearchType.recipe
-              ? state.currentRecipePage + 1
+              ? searchResult.recipes.isNotEmpty
+                  ? state.currentRecipePage + 1
+                  : state.currentRecipePage
               : state.currentRecipePage,
           currentAccountPage: event.params.type == SearchType.account
-              ? state.currentAccountPage + 1
+              ? searchResult.members.isNotEmpty
+                  ? state.currentAccountPage + 1
+                  : state.currentAccountPage
               : state.currentAccountPage,
           currentInstructionPage: event.params.type == SearchType.instruction
-              ? state.currentInstructionPage + 1
+              ? searchResult.instructions.isNotEmpty
+                  ? state.currentInstructionPage + 1
+                  : state.currentInstructionPage
               : state.currentInstructionPage,
           status: SearchStatus.success,
         ));

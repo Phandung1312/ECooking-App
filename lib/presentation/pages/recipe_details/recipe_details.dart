@@ -1035,7 +1035,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisSpacing: 5,
                       mainAxisSpacing: 5,
-                      childAspectRatio: 0.75,
+                      childAspectRatio: 0.7,
                       crossAxisCount: 2));
             }
             return Container();

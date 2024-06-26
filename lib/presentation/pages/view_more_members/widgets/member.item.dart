@@ -31,7 +31,7 @@ class MemberItem extends StatelessWidget {
             CircleAvatar(
               backgroundImage: NetworkImage(member.avatarUrl),
               backgroundColor: context.colors.hint,
-              radius: 70,
+              radius: 50,
             ),
             const SizedBox(height: 10),
             Text(
@@ -78,7 +78,7 @@ class MemberItem extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10),
-                      child: Text("Theo dõi",
+                      child: Text("Follow",
                           style: context.typographies.body
                               .copyWith(color: Colors.white)),
                     )
@@ -89,7 +89,7 @@ class MemberItem extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15, vertical: 10),
-                      child: Text("Đang theo dõi",
+                      child: Text("Đang Follow",
                           style: context.typographies.bodyBold),
                     ),
             )

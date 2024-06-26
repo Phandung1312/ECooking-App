@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:injectable/injectable.dart';
+import 'package:uq_system_app/core/bases/responses/base_error_response.dart';
 import 'package:uq_system_app/core/exceptions/exception.dart';
 import 'package:uq_system_app/domain/usecase/login.usecase.dart';
 import 'package:uq_system_app/domain/usecase/logout.usecase.dart';
@@ -32,15 +34,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ));
   }
   Future<void> _onLogin(AuthLogin event, Emitter<AuthState> emit) async {
-    EasyLoading.show();
-    await _loginUseCase(event.loginType);
-    EasyLoading.dismiss();
+    try{
+      emit(state.copyWith(
+        status: AuthStatus.loading,
+      ));
+      EasyLoading.show();
+      await _loginUseCase(event.loginType);
+      EasyLoading.dismiss();
 
-    emit(
-      state.copyWith(
-        status: AuthStatus.success,
-      ),
-    );
+      emit(
+        state.copyWith(
+          status: AuthStatus.success,
+        ),
+      );
+    }catch(exception){
+      EasyLoading.dismiss();
+      if(exception is DioException){
+        var errorResponse = BaseErrorResponse.fromJson(exception.response?.data);
+        if(errorResponse.statusCode == 403){
+          emit(state.copyWith(
+            status: AuthStatus.blocked,
+          ));
+        }
+        else{
+          emit(state.copyWith(
+            status: AuthStatus.failure,
+          ));
+        }
+      }
+
+    }
   }
 
   Future<void> _onLoggedOut(

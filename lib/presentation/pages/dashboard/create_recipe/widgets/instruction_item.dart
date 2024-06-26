@@ -10,6 +10,7 @@ import 'package:uq_system_app/core/extensions/theme.dart';
 import 'package:uq_system_app/data/models/instruction/instruction.request.dart';
 
 import '../../../../../assets.gen.dart';
+
 class InstructionItem extends StatelessWidget {
   final int index;
   final InstructionRequest data;
@@ -20,16 +21,17 @@ class InstructionItem extends StatelessWidget {
   final void Function(File file, int position) onPickImage;
   final void Function()? onDelete;
 
-  const InstructionItem({Key? key,
-    required this.index,
-    this.onDelete,
-    this.previousEndTime = 0,
-    this.videoTime = 0,
-    required this.data,
-    this.isVideo = false,
-    required this.onInstructionChange, required this.onPickImage})
+  const InstructionItem(
+      {Key? key,
+      required this.index,
+      this.onDelete,
+      this.previousEndTime = 0,
+      this.videoTime = 0,
+      required this.data,
+      this.isVideo = false,
+      required this.onInstructionChange,
+      required this.onPickImage})
       : super(key: key);
-
 
   Future<void> _selectTime(BuildContext context, bool isStart,
       int minTimeInSeconds, int maxTimeInSeconds, int selectedTime) async {
@@ -38,7 +40,7 @@ class InstructionItem extends StatelessWidget {
     FixedExtentScrollController minuteController = FixedExtentScrollController(
         initialItem: selectedMinutes - (minTimeInSeconds ~/ 60));
     FixedExtentScrollController secondController =
-    FixedExtentScrollController(initialItem: selectedSeconds);
+        FixedExtentScrollController(initialItem: selectedSeconds);
 
     await showDialog(
       context: context,
@@ -76,7 +78,7 @@ class InstructionItem extends StatelessWidget {
                               (maxTimeInSeconds ~/ 60) -
                                   (minTimeInSeconds ~/ 60) +
                                   1,
-                                  (index) =>
+                              (index) =>
                                   Text('${index + (minTimeInSeconds ~/ 60)}')),
                         ),
                       ),
@@ -170,8 +172,7 @@ class InstructionItem extends StatelessWidget {
         TextPosition(offset: contentController.text.length));
     startTimeInSeconds = data.startAt ?? previousEndTime + 1;
     endTimeInSeconds = data.endAt ?? videoTime;
-    isVideoSegment =
-        data.title != null || data.startAt != null;
+    isVideoSegment = data.title != null || data.startAt != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,10 +203,10 @@ class InstructionItem extends StatelessWidget {
                 minLines: 2,
                 maxLines: 10,
                 style:
-                context.typographies.body.copyWith(decorationThickness: 0),
+                    context.typographies.body.copyWith(decorationThickness: 0),
                 decoration: const InputDecoration(
                   hintText:
-                  'Gà mua về rửa sạch qua muối và chanh, để ráo nước.',
+                      'Gà mua về rửa sạch qua muối và chanh, để ráo nước.',
                   border: InputBorder.none,
                 ),
               ),
@@ -247,72 +248,73 @@ class InstructionItem extends StatelessWidget {
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 physics: const ClampingScrollPhysics(),
-                itemCount: (data.images?.length ?? 0),
-                itemBuilder: (context, index) =>
-                    InkWell(
-                      onTap: () async {
-                        final returnedImage =
-                        await ImagePicker().pickImage(
-                            source: ImageSource.gallery);
-                        if (returnedImage == null) return;
-                        onPickImage(File(returnedImage.path), index );
-                      },
-                      child: Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF6F1EC),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: data.images![index],
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Container(
-                            height: 100,
-                            color: context.colors.hint,
+                itemCount: ((data.images?.length ?? 0) + 1),
+                itemBuilder: (context, index) => index ==
+                        (data.images?.length ?? 0)
+                    ? (data.images?.length ?? 0) < 3
+                        ? InkWell(
+                            onTap: () async {
+                              final returnedImage = await ImagePicker()
+                                  .pickImage(source: ImageSource.gallery);
+                              if (returnedImage == null) return;
+                              onPickImage(File(returnedImage.path),
+                                  (data.images?.length ?? 0));
+                            },
+                            child: Container(
+                                height: 100,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF6F1EC),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: context.colors.hint.withOpacity(0.5),
+                                    size: 40,
+                                  ),
+                                )),
+                          )
+                        : const SizedBox()
+                    : InkWell(
+                        onTap: () async {
+                          final returnedImage = await ImagePicker()
+                              .pickImage(source: ImageSource.gallery);
+                          if (returnedImage == null) return;
+                          onPickImage(File(returnedImage.path), index);
+                        },
+                        child: Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF6F1EC),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          placeholder: (context, url) => Container(
-                            height: 100,
-                            color: context.colors.hint.withOpacity(0.5),
-                            child:  Center(
-                              child: CircularProgressIndicator(color: context.colors.secondary,),
-                            )
+                          child: CachedNetworkImage(
+                            imageUrl: data.images![index],
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Container(
+                              height: 100,
+                              color: context.colors.hint,
+                            ),
+                            placeholder: (context, url) => Container(
+                                height: 100,
+                                color: context.colors.hint.withOpacity(0.5),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: context.colors.secondary,
+                                  ),
+                                )),
                           ),
                         ),
                       ),
-                    ),
                 separatorBuilder: (BuildContext context, int index) {
                   return const SizedBox(width: 10);
                 },
               ),
             ),
-            const SizedBox(width: 10),
-            if((data.images?.length ?? 0) < 3 ) InkWell(
-              onTap: () async {
-                final returnedImage =
-                await ImagePicker().pickImage(source: ImageSource.gallery);
-                if (returnedImage == null) return;
-                onPickImage(File(returnedImage.path), (data.images?.length ?? 0) );
-              },
-              child: Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF6F1EC),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.camera_alt_outlined,
-                      color: context.colors.hint.withOpacity(0.5),
-                      size: 40,
-                    ),
-                  )),
-            ),
             const Expanded(
-              child: SizedBox(
-
-              ),
+              child: SizedBox(),
             ),
           ],
         ),
@@ -325,9 +327,7 @@ class InstructionItem extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 onInstructionChange(data.copyWith(
-                    title: "",
-                    startAt: previousEndTime + 1,
-                    endAt: videoTime));
+                    title: "", startAt: previousEndTime + 1, endAt: videoTime));
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -343,9 +343,7 @@ class InstructionItem extends StatelessWidget {
               ),
             ),
           ),
-        if (isVideoSegment ||
-            data.title != null ||
-            data.startAt != null) ...[
+        if (isVideoSegment || data.title != null || data.startAt != null) ...[
           Padding(
             padding: const EdgeInsets.only(left: 75, bottom: 10, right: 30),
             child: TextField(

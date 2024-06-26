@@ -93,7 +93,7 @@ class _ViewMoreMembersPageState extends State<ViewMoreMembersPage> {
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 15,
-                                  childAspectRatio: 0.65,
+                                  childAspectRatio: 0.60,
                                   crossAxisCount: 2));
                     },
                   ),

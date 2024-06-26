@@ -157,11 +157,13 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       width: 5,
                     ),
-                    Text(
-                      "Gõ tên nguyên liệu, công thức...",
-                      overflow: TextOverflow.ellipsis,
-                      style: context.typographies.body
-                          .withColor(context.colors.hint),
+                    Expanded(
+                      child: Text(
+                        "Gõ tên nguyên liệu, công thức...",
+                        overflow: TextOverflow.ellipsis,
+                        style: context.typographies.body
+                            .withColor(context.colors.hint),
+                      ),
                     )
                   ],
                 ),
@@ -416,7 +418,7 @@ class _HomePageState extends State<HomePage> {
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisSpacing: 5,
                             mainAxisSpacing: 5,
-                            childAspectRatio: 0.75,
+                            childAspectRatio: 0.7,
                             crossAxisCount: 2));
               }
               return Container();

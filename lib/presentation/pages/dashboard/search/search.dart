@@ -10,6 +10,9 @@ import 'package:uq_system_app/presentation/pages/dashboard/search/search_bloc.da
 import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/custom_search_delegate.dart';
 import 'package:uq_system_app/presentation/pages/dashboard/search/widgets/ingredient.item.dart';
 
+import '../../../../domain/entities/account.dart';
+import '../../../../helpers/user_info.helper.dart';
+
 @RoutePage()
 class SearchPage extends StatefulWidget {
   @override
@@ -19,9 +22,12 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage>
     with SingleTickerProviderStateMixin {
   final SearchBloc _bloc = getIt.get<SearchBloc>();
-
+  Account? _account;
   @override
   void initState() {
+    getIt.get<UserInfoHelper>().getAccountUser().then((value) {
+      _account = value;
+    });
     super.initState();
   }
 
@@ -39,7 +45,7 @@ class _SearchPageState extends State<SearchPage>
         color: context.colors.primary,
         fontSize: 18,
       ),
-      textInputAction: TextInputAction.search,
+      textInputAction: TextInputAction.search, accountId: _account?.id,
     );
 
     delegate.query = initialQuery;
@@ -81,33 +87,37 @@ class _SearchPageState extends State<SearchPage>
                     onTap: () {
                       _showSearch('');
                     },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: context.colors.hint.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.search,
-                            color: context.colors.primary.withOpacity(0.5),
-                            size: 30,
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Text(
-                              'Gõ từ khóa tìm kiếm...',
-                              style: context.typographies.body.copyWith(
-                                color: context.colors.primary.withOpacity(0.5),
-                                fontSize: 18,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Container(
+
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        margin:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.025),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: context.colors.hint.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search,
+                              color: context.colors.primary.withOpacity(0.5),
+                              size: 30,
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Text(
+                                'Gõ từ khóa tìm kiếm...',
+                                style: context.typographies.body.copyWith(
+                                  color: context.colors.primary.withOpacity(0.5),
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

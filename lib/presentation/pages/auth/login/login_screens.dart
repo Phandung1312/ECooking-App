@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uq_system_app/core/extensions/text_style.dart';
 import 'package:uq_system_app/core/extensions/theme.dart';
 import 'package:uq_system_app/di/injector.dart';
 import 'package:uq_system_app/domain/entities/enum/enum.dart';
+import 'package:uq_system_app/helpers/google_auth.helper.dart';
 import 'package:uq_system_app/presentation/blocs/auth/auth_bloc.dart';
 import 'package:uq_system_app/presentation/blocs/auth/auth_event.dart';
 import 'package:uq_system_app/presentation/blocs/auth/auth_state.dart';
@@ -27,10 +29,33 @@ class _LoginPageState extends State<LoginPage> {
     return BlocProvider.value(
       value: _bloc,
       child: BlocListener<AuthBloc, AuthState>(
-        listener: (BuildContext context, AuthState state) {
+
+        listener: (BuildContext context, AuthState state) async{
           if (state.status == AuthStatus.success) {
             context.router.pop(true);
+            return;
           }
+          if(state.status == AuthStatus.blocked){
+            Fluttertoast.showToast(
+                msg: 'Rất tiếc tài khoản của bạn đã khóa. Vui lòng liên hệ với quản trị viên để biết thêm chi tiết.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: context.colors.background,
+                textColor: context.colors.primary,
+                fontSize: 16.0);
+          }
+          if(state.status == AuthStatus.failure){
+            Fluttertoast.showToast(
+                msg: 'Đã có lỗi xảy ra. Vui lòng thử lại sau.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: context.colors.background,
+                textColor: context.colors.primary,
+                fontSize: 16.0);
+          }
+          await GoogleAuthHelper.signOut();
         },
         child: Scaffold(
           body: Stack(

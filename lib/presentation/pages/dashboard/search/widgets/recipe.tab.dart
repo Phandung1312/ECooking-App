@@ -61,15 +61,18 @@ class _RecipeTabState extends State<RecipeTab> {
               );
             }
             else{
-              return ListView.separated(
-                itemCount: data.length,
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, index) => RecipeItem(
-                    recipe: data[index], type: RecipeSearchType.SEARCH),
-                separatorBuilder: (BuildContext context, int index) {
-                  return const SizedBox(height: 10);
-                },
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: ListView.separated(
+                  itemCount: data.length,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (context, index) => RecipeItem(
+                      recipe: data[index], type: RecipeSearchType.SEARCH),
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const SizedBox(height: 10);
+                  },
+                ),
               );
             }
           },

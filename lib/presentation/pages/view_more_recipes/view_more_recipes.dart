@@ -14,7 +14,6 @@ import '../../../domain/entities/enum/enum.dart';
 import '../../widgets/recipe_skeleton.dart';
 import '../dashboard/home/widgets/recipe_item.dart';
 
-
 @RoutePage()
 class ViewMoreRecipesPage extends StatefulWidget {
   @override
@@ -30,12 +29,15 @@ class _ViewMoreRecipesPageState extends State<ViewMoreRecipesPage> {
 
     super.dispose();
   }
+
   void _onRefresh() async {
     _bloc.add(const ViewMoreRecipesLoad(isLoadMore: false));
   }
+
   void _onLoading() async {
     _bloc.add(const ViewMoreRecipesLoad(isLoadMore: true));
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -45,11 +47,9 @@ class _ViewMoreRecipesPageState extends State<ViewMoreRecipesPage> {
         appBar: AppBar(
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
-            title: Text(
-                'Công thức phổ biến',
-                style: context.typographies.body.copyWith(
-                    color: context.colors.primary, fontSize: 20)
-            ),
+            title: Text('Công thức phổ biến',
+                style: context.typographies.body
+                    .copyWith(color: context.colors.primary, fontSize: 20)),
             centerTitle: false,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -57,8 +57,7 @@ class _ViewMoreRecipesPageState extends State<ViewMoreRecipesPage> {
               onPressed: () {
                 context.router.pop();
               },
-            )
-        ),
+            )),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
@@ -70,47 +69,59 @@ class _ViewMoreRecipesPageState extends State<ViewMoreRecipesPage> {
                   enablePullUp: true,
                   onRefresh: _onRefresh,
                   onLoading: _onLoading,
-                  child: ViewMoreRecipesBuilder(statuses: ViewMoreRecipesStatus.values,
-                    builder: (BuildContext context, ViewMoreRecipesState state) {
+                  child: ViewMoreRecipesBuilder(
+                    statuses: ViewMoreRecipesStatus.values,
+                    builder:
+                        (BuildContext context, ViewMoreRecipesState state) {
                       if (state.status == ViewMoreRecipesStatus.loading) {
                         return GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: 10,
                             itemBuilder: (context, index) =>
-                            const RecipeSkeleton(type: RecipeSearchType.NEWEST),
+                                const RecipeSkeleton(
+                                    type: RecipeSearchType.NEWEST),
                             gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 5,
-                                childAspectRatio: 0.7,
-                                crossAxisCount: 2));
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisSpacing: 5,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: 0.7,
+                                    crossAxisCount: 2));
                       }
                       if (state.status == ViewMoreRecipesStatus.success) {
-                        return GridView.builder(
-                            primary: true,
-                            shrinkWrap: true,
-                            // controller: scrollController,
-                            physics: const ClampingScrollPhysics(),
-                            itemCount: state.recipes.length,
-                            itemBuilder: (context, index) => RecipeItem(
-                                recipe: state.recipes[index],
-                                type: RecipeSearchType.NEWEST),
-                            gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisSpacing: 5,
-                                mainAxisSpacing: 5,
-                                childAspectRatio: 0.75,
-                                crossAxisCount: 2));
+                        return ViewMoreRecipesSelector(
+                          builder: (data) {
+                            return GridView.builder(
+                                primary: true,
+                                shrinkWrap: true,
+                                // controller: scrollController,
+                                physics: const ClampingScrollPhysics(),
+                                itemCount: data.length,
+                                itemBuilder: (context, index) => RecipeItem(
+                                      recipe: data[index],
+                                      type: RecipeSearchType.NEWEST,
+                                      onSavedChange: (data) {
+                                        _bloc.add(
+                                            ViewMoreRecipesChangeSavedRecipe(data));
+                                      },
+                                    ),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisSpacing: 5,
+                                        mainAxisSpacing: 5,
+                                        childAspectRatio: 0.7,
+                                        crossAxisCount: 2));
+                          }, selector: (ViewMoreRecipesState state) => state.recipes,
+                        );
                       }
                       return Container();
-                    },),
+                    },
+                  ),
                 ),
               ),
             ],
           ),
         ),
-
       ),
     );
   }
